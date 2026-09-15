@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -118,31 +119,61 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 def call_openai(prompt, cfg):
     api_key = cfg.get("api_key") or GROQ_API_KEY
+    if not api_key:
+        raise ExtractError(
+            "No API key configured — set GROQ_API_KEY when starting the "
+            "server, or add a key in settings.", 400)
     base = (cfg.get("base_url") or GROQ_BASE_URL).rstrip("/")
     model = cfg.get("model") or GROQ_MODEL
-    body = json.dumps({
+    payload = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
-    }).encode()
-    req = urllib.request.Request(
-        base + "/chat/completions", data=body,
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {api_key}",
-                 # Groq's Cloudflare rejects the default Python-urllib UA (error 1010)
-                 "User-Agent": "ExamOracle/1.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=300) as resp:
-            out = json.loads(resp.read().decode())
-    except urllib.error.HTTPError as e:
-        detail = e.read().decode(errors="replace")[:300]
-        raise ExtractError(f"OpenAI-compatible API error {e.code}: {detail}", 502)
-    except urllib.error.URLError as e:
-        raise ExtractError(f"Could not reach {base}: {e.reason}", 502)
-    try:
-        return out["choices"][0]["message"]["content"]
-    except (KeyError, IndexError, TypeError):
-        raise ExtractError("Unexpected response shape from the "
-                           "OpenAI-compatible API", 502)
+        "max_tokens": 8000,
+    }
+    # gpt-oss models: keep reasoning cheap so it doesn't eat the output budget
+    if "gpt-oss" in model:
+        payload["reasoning_effort"] = "low"
+
+    last_empty = False
+    for attempt in range(3):
+        req = urllib.request.Request(
+            base + "/chat/completions", data=json.dumps(payload).encode(),
+            headers={"Content-Type": "application/json",
+                     "Authorization": f"Bearer {api_key}",
+                     # Groq's Cloudflare rejects the default Python-urllib UA (error 1010)
+                     "User-Agent": "ExamOracle/1.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=300) as resp:
+                out = json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode(errors="replace")[:300]
+            if e.code == 429 and attempt < 2:
+                # Free-tier rate limit — wait the suggested time and retry
+                wait = 5.0
+                m = re.search(r"try again in ([\d.]+)s", detail)
+                if m:
+                    wait = min(float(m.group(1)) + 0.5, 15.0)
+                time.sleep(wait)
+                continue
+            raise ExtractError(f"OpenAI-compatible API error {e.code}: {detail}", 502)
+        except urllib.error.URLError as e:
+            raise ExtractError(f"Could not reach {base}: {e.reason}", 502)
+        try:
+            message = out["choices"][0]["message"]
+        except (KeyError, IndexError, TypeError):
+            raise ExtractError("Unexpected response shape from the "
+                               "OpenAI-compatible API", 502)
+        content = (message.get("content") or "").strip()
+        if not content:
+            # gpt-oss sometimes leaves the answer only in the reasoning channel
+            content = (message.get("reasoning") or "").strip()
+        if content:
+            return content
+        last_empty = True  # empty reply — retry once more
+    raise ExtractError(
+        "The AI model returned an empty response"
+        + (" — rate limited, wait a moment and try again" if last_empty else "")
+        + ". Try again, or switch the provider to Claude in settings.", 502)
 
 
 def call_llm(prompt, cfg):
