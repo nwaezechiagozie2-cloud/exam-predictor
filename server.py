@@ -108,14 +108,15 @@ def call_claude(prompt):
     return result.stdout.strip()
 
 
+NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
+NVIDIA_MODEL = "openai/gptoss20b"
+NVIDIA_API_KEY = "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"
+
+
 def call_openai(prompt, cfg):
-    api_key = cfg.get("api_key")
-    if not api_key:
-        raise ExtractError(
-            "No API key provided for the OpenAI-compatible provider — "
-            "add one in settings.", 400)
-    base = (cfg.get("base_url") or "https://api.openai.com/v1").rstrip("/")
-    model = cfg.get("model") or "gpt-4o-mini"
+    api_key = cfg.get("api_key") or NVIDIA_API_KEY
+    base = (cfg.get("base_url") or NVIDIA_BASE_URL).rstrip("/")
+    model = cfg.get("model") or NVIDIA_MODEL
     body = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
@@ -140,9 +141,8 @@ def call_openai(prompt, cfg):
 
 
 def call_llm(prompt, cfg):
-    provider = cfg.get("provider") or (
-        "claude" if shutil.which("claude") else "openai")
-    if provider == "claude":
+    provider = cfg.get("provider") or "openai"
+    if provider == "claude" and shutil.which("claude"):
         return call_claude(prompt)
     return call_openai(prompt, cfg)
 
