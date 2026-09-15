@@ -111,7 +111,7 @@ def call_claude(prompt):
 
 
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-GROQ_MODEL = "openai/gpt-oss-20b"
+GROQ_MODEL = "openai/gpt-oss-120b"
 # Set via environment: GROQ_API_KEY=gsk-... python3 server.py
 # (never hardcode — GitHub push protection blocks secret commits)
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")

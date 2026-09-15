@@ -1060,8 +1060,15 @@
           <input type="text" class="form-input" id="settingBaseUrl" placeholder="https://api.openai.com/v1">
         </div>
         <div class="form-group">
-          <label class="form-label">Model Name</label>
-          <input type="text" class="form-input" id="settingModel" placeholder="gpt-4o-mini">
+          <label class="form-label">Model</label>
+          <select class="form-input" id="settingModel">
+            <option value="openai/gpt-oss-120b">GPT-OSS 120B — most capable (best for long papers)</option>
+            <option value="openai/gpt-oss-20b">GPT-OSS 20B — fastest</option>
+            <option value="qwen/qwen3.8-27b">Qwen 3.8 27B — alternative</option>
+            <option value="custom">Custom…</option>
+          </select>
+          <input type="text" class="form-input" id="settingModelCustom" placeholder="model id, e.g. gpt-4o-mini" style="display: none; margin-top: 8px;">
+          <div class="form-hint">Long papers extract most reliably with the 120B model.</div>
         </div>
         <div class="form-group">
           <label class="form-label">API Key</label>
@@ -1224,7 +1231,7 @@
       const defaults = {
         provider: "openai",
         base_url: "https://api.groq.com/openai/v1",
-        model: "openai/gpt-oss-20b",
+        model: "openai/gpt-oss-120b",
         api_key: ""
       };
       try {
@@ -1236,10 +1243,13 @@
     }
 
     function saveSettings() {
+      const model = settingModel.value === "custom"
+        ? settingModelCustom.value.trim()
+        : settingModel.value;
       const settings = {
         provider: providerClaude.checked ? "claude" : "openai",
         base_url: settingBaseUrl.value.trim() || "https://api.openai.com/v1",
-        model: settingModel.value.trim() || "gpt-4o-mini",
+        model: model || "openai/gpt-oss-120b",
         api_key: settingApiKey.value.trim()
       };
       localStorage.setItem("examoracle-settings", JSON.stringify(settings));
@@ -1257,9 +1267,16 @@
         openaiSettingsWrap.style.display = "none";
       }
       settingBaseUrl.value = s.base_url || "";
-      settingModel.value = s.model || "";
+      const known = Array.from(settingModel.options).some(o => o.value === s.model);
+      settingModel.value = known ? s.model : "custom";
+      settingModelCustom.value = known ? "" : (s.model || "");
+      settingModelCustom.style.display = settingModel.value === "custom" ? "block" : "none";
       settingApiKey.value = s.api_key || "";
     }
+
+    settingModel.addEventListener("change", () => {
+      settingModelCustom.style.display = settingModel.value === "custom" ? "block" : "none";
+    });
 
     providerClaude.addEventListener("change", () => openaiSettingsWrap.style.display = "none");
     providerOpenAI.addEventListener("change", () => openaiSettingsWrap.style.display = "block");
