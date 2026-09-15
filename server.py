@@ -77,6 +77,8 @@ def build_extraction_prompt(existing_topics):
         "Use null if the paper doesn't say.",
         "- topic: a short snake_case label for the topic being tested.",
         "- text: a summary of what is asked, 15 words or fewer.",
+        "- Extract EVERY question in the paper — never stop early, skip "
+        "questions, or summarize several questions into one row.",
         "- Ignore instructions, boilerplate, cover pages and formula sheets.",
     ]
     if existing_topics:
@@ -128,7 +130,7 @@ def call_openai(prompt, cfg):
     payload = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 8000,
+        "max_tokens": 16000,
     }
     # gpt-oss models: keep reasoning cheap so it doesn't eat the output budget
     if "gpt-oss" in model:
