@@ -1083,7 +1083,16 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const BACKEND_URL = "https://ommatophorous-katrina-unregulatory.ngrok-free.dev";
+    // Backend candidates in priority order: the VPS (cloudflare tunnel),
+    // then localhost (works when this page is opened on the machine that
+    // runs the backend). First candidate to answer /health wins.
+    const BACKEND_CANDIDATES = [
+      "https://rep-advances-teaching-maui.trycloudflare.com",
+      "http://localhost:8787"
+    ];
+    let BACKEND_URL = BACKEND_CANDIDATES[0];
+    let backendResolved = false;
+
     function apiUrl(endpoint) {
       if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         return endpoint;
@@ -1095,6 +1104,20 @@
     function apiFetch(url, opts = {}) {
       opts.headers = Object.assign({}, opts.headers || {}, { "ngrok-skip-browser-warning": "1" });
       return fetch(url, opts);
+    }
+
+    async function resolveBackend() {
+      if (backendResolved) return;
+      backendResolved = true;
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+        return; // served by the backend itself — use same-origin paths
+      }
+      for (const url of BACKEND_CANDIDATES) {
+        try {
+          const res = await apiFetch(url + "/health", { signal: AbortSignal.timeout(5000) });
+          if (res.ok) { BACKEND_URL = url; return; }
+        } catch (e) { /* try the next candidate */ }
+      }
     }
 
     // State
@@ -1249,6 +1272,7 @@
 
     // Check Health
     async function checkHealth() {
+      await resolveBackend();
       try {
         const res = await apiFetch(apiUrl("/health"));
         const data = await res.json();
