@@ -1,0 +1,142 @@
+                                   18.01 Exam 3
+
+
+
+
+Name:
+
+
+
+
+                                                                 Problem 1:                 /20
+
+                                                                 Problem 2:                 /30
+
+                                                                 Problem 3:                 /25
+
+                                                                 Problem 4:                 /25
+
+
+
+
+                                                                 Total:                     /100
+
+
+
+Instructions: Please write your name at the top of every page of the exam. The exam is closed
+book, calculators are not allowed, but you are allowed to use your prepared index card. You will
+have approximately 50 minutes for this exam. The point value of each problem is written next
+to the problem – use your time wisely. Please show all work, unless instructed otherwise. Partial
+credit will be given only for work shown.
+You may use either pencil or ink. If you have a question, need extra paper, need to use the restroom,
+etc., raise your hand.
+
+
+                                                 1
+Name:                                                            Problem 1:                            /20
+
+Problem 1(20 points) A particle moves along the positive x­axis with velocity 5 units/second. How
+fast is the particle moving away from the point (0, 3) (which is on the y­axis) when the particle is
+7 units away from (0, 3)?
+
+
+
+
+                                                 2
+Name:                                                              Problem 2:                             /30
+
+                                             √
+Problem 2(30 points) The antiderivative of 1/ 1 + x2 is,
+                        �
+                               1            �    √       �
+                           √        dx = ln x + x2 + 1 , x > 0.
+                             1 + x2
+
+(a)(20 points) Break the interval [0, a] into a union of n equal subintervals. Using the right endpoint
+of each subinterval, compute the Riemann sum approximating the integral,
+                                            � a
+                                                     1
+                                                 √        dx.
+                                              0    1 + x2
+Leave your answer in the form of a sum. But simplify as much as possible. Show all work.
+
+
+
+
+                                                  3
+Name:                                                                   Problem 4, continued
+
+(b)(10 points) For an appropriate choice of a, express the following limit in terms of the Riemann
+sum from (a). Use the formula for the antiderivative to compute the limit.
+                                            n
+                                            �            1
+                                      lim         √                 .
+                                     n→∞
+                                            k=1
+                                                      9n2 + 16k 2
+
+
+
+
+                                                  4
+Name:                                                           Problem 3:                            /25
+
+Problem 3(25 points) Solve the following separable ordinary diﬀerential equation with given initial
+condition.                             � �
+                                          y (x) = ex+2y ,
+                                             y(0) = 0.
+
+
+
+
+                                                5
+Name:                                                           Problem 4:                      /25
+
+Problem 4(25 points) Compute each of the following Riemann integrals. You are not required to
+show every step. Please do say what method you use to compute the integral.
+(a)(5 points)
+                               � √5
+                                      1 + 2x + 3x2 + 4x3 + 5x4 dx
+                                0
+
+
+
+
+(b)(5 points)                            � 10
+                                                      x
+                                                √          dx
+                                          0         1 + x2
+
+
+
+
+                                                    6
+Name:                                  Problem 4, continued
+
+(c)(5 points)
+                � π/2
+                         sin7 (θ)dθ
+                 −π/2
+
+
+
+
+(d)(5 points)    � 2
+                         ln(t2 )
+                                 dt
+                     1     t
+
+
+
+
+(e)(5 points)
+                � π/4
+                         sin(2t)
+                                 dt.
+                 0       cos(t)
+
+
+
+
+                          7
+

@@ -1,0 +1,272 @@
+[
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam1",
+    "q": "1",
+    "topic": "solutions-to-axb",
+    "marks": 24,
+    "text": "Given complete solution of Ax=b, find R and d, then recover A and b via elimination matrix."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam1",
+    "q": "2a",
+    "topic": "column-space-null-space",
+    "marks": 26,
+    "text": "Find special solutions and describe nullspace; describe column space of given matrix."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam1",
+    "q": "2c",
+    "topic": "rank",
+    "marks": 10,
+    "text": "Find reduced row echelon form of 6 by 8 block matrix built from repeated A."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam1",
+    "q": "3",
+    "topic": "solutions-to-axb",
+    "marks": 16,
+    "text": "For rank-3 3x5 matrix, decide solvability/uniqueness of Ax=b; describe column space and nullspace."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam1",
+    "q": "4",
+    "topic": "column-space-null-space",
+    "marks": 24,
+    "text": "Use solutions of Ax=b to decide whether a given vector b lies in column space of A."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam2",
+    "q": "1",
+    "topic": "projections",
+    "marks": 30,
+    "text": "Projection matrix onto line; its column space, nullspace, and eigenvectors/eigenvalues."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam2",
+    "q": "2",
+    "topic": "least-squares",
+    "marks": 30,
+    "text": "Least squares equation for x-hat, A=QR solution form, projection onto orthonormal plane."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam2",
+    "q": "3ab",
+    "topic": "determinants",
+    "marks": null,
+    "text": "Determinant of matrix with zero diagonal and -1 elsewhere; (1,1) entry of its inverse."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam2",
+    "q": "3cd",
+    "topic": "eigenvalues-eigenvectors",
+    "marks": null,
+    "text": "Find orthogonal eigenvectors for eigenvalue 1 and the remaining eigenvalue of A_n."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam3",
+    "q": "1",
+    "topic": "eigenvalues-eigenvectors",
+    "marks": 40,
+    "text": "Symmetric Householder matrix H=I-2uuT: show H^2=I, find eigenvalues, diagonalizability, trace."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam3",
+    "q": "2",
+    "topic": "positive-definite-matrices",
+    "marks": 30,
+    "text": "Show A inverse and QAQT positive definite; show block matrix positive semidefinite."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam3",
+    "q": "3a",
+    "topic": "eigenvalues-eigenvectors",
+    "marks": null,
+    "text": "Find eigenvalues and eigenvectors of [[0,-1],[4,0]]; expand u(0) in eigenvectors."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam3",
+    "q": "3b",
+    "topic": "matrix-powers-exponentials",
+    "marks": null,
+    "text": "Solve du/dt = Au using eigenvectors of A starting from given u(0)."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "exam3",
+    "q": "3c",
+    "topic": "svd",
+    "marks": null,
+    "text": "Find the SVD A=U Sigma V^T via eigenvectors of A^T A and then U."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "1a",
+    "topic": "systems-of-equations",
+    "marks": null,
+    "text": "Find lower and upper triangular factors L and U so that A=LU."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "1b",
+    "topic": "rank",
+    "marks": null,
+    "text": "Find rref(A) and count independent columns of A."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "1c",
+    "topic": "column-space-null-space",
+    "marks": null,
+    "text": "Find a basis for the nullspace of A."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "1d",
+    "topic": "solutions-to-axb",
+    "marks": null,
+    "text": "Write complete solution to Ax=b when b is sum of columns of A."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "2",
+    "topic": "least-squares",
+    "marks": 11,
+    "text": "Best least squares fit of y=C+D 2^t to three given points; find C and D."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "3",
+    "topic": "linear-transformations",
+    "marks": 11,
+    "text": "Determine matrix A from equations Av_i=b_i; its column space and invertibility."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "4",
+    "topic": "matrix-powers-exponentials",
+    "marks": 11,
+    "text": "Markov preference matrix limit of A^k; solve coupled differential equations; straight-line solutions."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "5ab",
+    "topic": "linear-transformations",
+    "marks": null,
+    "text": "Find matrix for 120-degree rotation about axis x=y=z; explain A^3=I and eigenvalues."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "5c",
+    "topic": "eigenvalues-eigenvectors",
+    "marks": null,
+    "text": "Eigenvalues and eigenvectors of projection onto plane x+2y+z=0, without computing P."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "6a",
+    "topic": "eigenvalues-eigenvectors",
+    "marks": null,
+    "text": "Eigenvalues and orthonormal eigenvectors of A^T A and AA^T for given 3x2 matrix."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "6b",
+    "topic": "gram-schmidt",
+    "marks": null,
+    "text": "Apply Gram-Schmidt orthonormalization to columns of a rank-one matrix."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "6c",
+    "topic": "positive-definite-matrices",
+    "marks": null,
+    "text": "Why AA^T cannot be positive definite when m>n; test for A^T A positive definiteness."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "7",
+    "topic": "determinants",
+    "marks": 11,
+    "text": "Determinants of three 4x4 matrices, including cofactor and parameter-dependent determinant."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "8a",
+    "topic": "similar-matrices",
+    "marks": null,
+    "text": "Prove that if A^k approaches 0 then similar matrix B^k also approaches 0."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "8bc",
+    "topic": "diagonalization",
+    "marks": null,
+    "text": "Show matrices diagonalized by fixed S form a subspace; find bases for it and diagonal matrices."
+  },
+  {
+    "course": "18.06",
+    "year": 2010,
+    "paper": "final",
+    "q": "9",
+    "topic": "other:incidence-matrix-networks",
+    "marks": 11,
+    "text": "Incidence matrix of square network: rank, nullspaces, solve A^T A v=0 for voltages and currents."
+  }
+]

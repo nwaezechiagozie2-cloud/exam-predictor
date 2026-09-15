@@ -1,0 +1,77 @@
+MIT OpenCourseWare
+http://ocw.mit.edu
+
+
+
+
+18.01 Single Variable Calculus
+Fall 2006
+
+
+
+For information about citing these materials or our Terms of Use, visit: http://ocw.mit.edu/terms.
+                                    18.01 Exam 2
+
+                              Tuesday, Oct. 17, 2006
+
+Problem 1. (15 pts.) Estimate the following to two decimal places (show work)
+
+   a. (8 pts.) sin(π + 1/100)
+
+   b. (7 pts.)    101
+
+                                                      4
+Problem 2. (20 pts.) Sketch the graph of         y=     + x + 1 on − ∞ < x < ∞
+                                                      x
+   and label all critical points and infection points with their coordinates on the
+   graph along with the letter “C” or “I”
+
+
+Problem 3. (20 pts.) An architect plans to build a triangular enclosure with a fence
+on two sides and a wall on the third side. Each of the fence segments has fixed
+Length L. What is the length x of the third side if the region enclosed has the largest
+possible area? Show work and include an argument to show that your answer really
+gives the maximum area.
+
+Problem4. (15 pts) A rocket has launched straight up, and its altitude is h = 10t2
+feet after t seconds. You are on the ground 1000 feet from the launch site. The line
+of sight from you to the rocket makes an angle θ with the horizontal. By how many
+Radians per second is θ changing ten seconds after the launch?
+
+Write down on which intervals the function is:
+
+Increasing:
+
+
+
+Decreasing:
+
+
+
+Concave down:
+Problem 5. a. (10 pts) Evaluate the following indefinite integrals
+
+          i.   ∫ cos(3x)dx
+          ii. ∫ xe
+                     2
+                   (x )
+                        dx
+
+
+                                                      1
+               b. (10 pts) Find y( x) such that y =        and y(0) =1
+                                                 1
+
+                                                      y3
+
+
+
+Problem 6. (10 pts.) Suppose that f '(x) = e( x ) , and f (0) =10
+                                                  2
+
+
+
+  One can conclude from the mean value theorem that
+                                  A < f (1) < B
+   for which numbers A and B?
+

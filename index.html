@@ -1,0 +1,2143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ExamOracle — Study-Priority Predictor</title>
+  <style>
+    :root {
+      --bg: #f9f9f7;
+      --card: #fcfcfb;
+      --card-hover: #ffffff;
+      --text: #0b0b0b;
+      --text-secondary: #52514e;
+      --muted: #898781;
+      --border: #e1e0d9;
+      --border-subtle: #eeede8;
+      --accent: #2a78d6;
+      --accent-hover: #1f65bb;
+      --accent-subtle: rgba(42, 120, 214, 0.08);
+      --older-dot: #86b6ef;
+      --recent-dot: #1c5cab;
+      --success: #1b8a5a;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
+      --radius: 10px;
+      --radius-sm: 6px;
+      --radius-pill: 9999px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0d0d0d;
+        --card: #1a1a19;
+        --card-hover: #222220;
+        --text: #ffffff;
+        --text-secondary: #c3c2b7;
+        --muted: #898781;
+        --border: #2c2c2a;
+        --border-subtle: #222220;
+        --accent: #3987e5;
+        --accent-hover: #4e96eb;
+        --accent-subtle: rgba(57, 135, 229, 0.12);
+        --older-dot: #6da7ec;
+        --recent-dot: #3987e5;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    [data-theme="dark"] {
+      --bg: #0d0d0d;
+      --card: #1a1a19;
+      --card-hover: #222220;
+      --text: #ffffff;
+      --text-secondary: #c3c2b7;
+      --muted: #898781;
+      --border: #2c2c2a;
+      --border-subtle: #222220;
+      --accent: #3987e5;
+      --accent-hover: #4e96eb;
+      --accent-subtle: rgba(57, 135, 229, 0.12);
+      --older-dot: #6da7ec;
+      --recent-dot: #3987e5;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 80px;
+    }
+
+    .tabular { font-variant-numeric: tabular-nums; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      gap: 16px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent), #764ba2);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(42, 120, 214, 0.3);
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-tagline {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background: var(--card-hover);
+      border-color: var(--muted);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-icon { padding: 7px; width: 34px; height: 34px; justify-content: center; }
+
+    /* Badges & Status */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .status-dot.offline { background: var(--muted); }
+
+    /* Course Navigation Tabs */
+    .course-nav {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .course-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .tab-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover {
+      background: var(--card);
+      color: var(--text);
+    }
+    .tab-btn.active {
+      background: var(--card);
+      border-color: var(--border);
+      color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+    .tab-count {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      background: var(--border-subtle);
+      color: var(--text-secondary);
+    }
+    .tab-btn.active .tab-count {
+      background: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    /* KPI Row */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .kpi-value {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-top: 4px;
+      color: var(--text);
+    }
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 36px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Predictions Hero */
+    .predictions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .prediction-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .prediction-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .prediction-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-subtle);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .prediction-card:nth-child(1) .rank-badge {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .prediction-title-wrap { flex: 1; }
+    .prediction-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .prediction-stats {
+      display: flex;
+      gap: 16px;
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .stat-mini-label { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+    .stat-mini-val { font-size: 16px; font-weight: 700; color: var(--text); }
+    .prediction-evidence {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sample-questions-box {
+      margin-top: auto;
+      border-top: 1px dashed var(--border);
+      padding-top: 12px;
+    }
+    .sample-q-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .sample-q-item {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg);
+      padding: 6px 10px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-style: italic;
+      border-left: 2px solid var(--accent);
+    }
+
+    /* Trend Chips */
+    .trend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      background: var(--bg);
+      white-space: nowrap;
+    }
+
+    /* Chart Container */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-top: 24px;
+    }
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.older { background: var(--older-dot); }
+    .legend-dot.recent { background: var(--recent-dot); }
+
+    .chart-svg-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    /* Dumbbell row styling */
+    .chart-row {
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    .chart-row:hover {
+      opacity: 0.85;
+    }
+
+    /* Tooltip */
+    .chart-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: #1a1a19;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      display: none;
+      line-height: 1.4;
+      max-width: 280px;
+    }
+
+    /* Table Section */
+    .table-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 13px;
+      width: 260px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .filter-select {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 13px;
+      border: 1px solid var(--border);
+      outline: none;
+    }
+
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    th {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      user-select: none;
+    }
+    th:hover { color: var(--text); }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text);
+    }
+    tr.topic-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    tr.topic-row:hover {
+      background: var(--card-hover);
+    }
+    tr.topic-row.expanded {
+      background: var(--accent-subtle);
+    }
+    .chevron {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      color: var(--muted);
+    }
+    tr.topic-row.expanded .chevron {
+      transform: rotate(90deg);
+    }
+
+    /* Question details drawer inside table */
+    .drawer-row td {
+      padding: 0;
+      background: var(--bg);
+    }
+    .drawer-content {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .drawer-header {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .question-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .q-item-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .q-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .q-marks-pill {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+      background: var(--border-subtle);
+      color: var(--text-secondary);
+    }
+    .q-text { color: var(--text); flex: 1; }
+
+    /* Modals & Panels */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      transform: scale(0.96);
+      transition: transform 0.2s ease;
+    }
+    .modal-backdrop.open .modal {
+      transform: scale(1);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; }
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--accent);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-subtle);
+    }
+
+    /* Collapsible How It Works */
+    .explainer-card {
+      margin-top: 40px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .explainer-summary {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .explainer-body {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+    .explainer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 14px;
+    }
+
+    /* Preview Table for Extracted Questions */
+    .preview-box {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      max-height: 320px;
+      background: var(--card);
+    }
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .preview-table th { padding: 8px 12px; background: var(--bg); }
+    .preview-table td { padding: 8px 12px; border-top: 1px solid var(--border-subtle); }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1a1a19;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-inner { flex-direction: column; height: auto; padding: 12px 0; gap: 12px; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .form-row { grid-template-columns: 1fr; }
+      .predictions-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-inner">
+      <div class="brand-wrap">
+        <div class="brand-logo">🔮</div>
+        <div>
+          <div class="brand-title">
+            ExamOracle
+            <span class="status-badge" id="apiStatusBadge">
+              <span class="status-dot" id="apiDot"></span>
+              <span id="apiStatusText">Checking API...</span>
+            </span>
+          </div>
+          <div class="brand-tagline">Study-priority predictor — evidence-backed exam forecasts from past papers</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="/slides.html" target="_blank" class="btn">
+          <span>Pitch Deck</span> ↗
+        </a>
+        <button class="btn btn-primary" id="openUploadBtn">
+          <span>+ Add Exam Paper</span>
+        </button>
+        <button class="btn btn-icon" id="openSettingsBtn" title="Extractor Settings">
+          ⚙️
+        </button>
+        <button class="btn btn-icon" id="themeToggleBtn" title="Toggle theme">
+          🌓
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Course Selector Tabs -->
+    <div class="course-nav">
+      <div class="course-tabs" id="courseTabs">
+        <!-- populated dynamically -->
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-sm" id="reloadSeedBtn" title="Reset dataset to MIT OCW seed rows">
+          ↺ Reset Seed Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Course Overview -->
+    <div id="courseContent">
+      <!-- KPI Stats -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Papers Analyzed</div>
+          <div class="kpi-value tabular" id="kpiPapers">—</div>
+          <div class="kpi-sub">historical exams & finals</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Years Covered</div>
+          <div class="kpi-value tabular" id="kpiYears">—</div>
+          <div class="kpi-sub" id="kpiYearsList">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Questions Extracted</div>
+          <div class="kpi-value tabular" id="kpiQuestions">—</div>
+          <div class="kpi-sub">structured question rows</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Topics Identified</div>
+          <div class="kpi-value tabular" id="kpiTopics">—</div>
+          <div class="kpi-sub">canonical curriculum topics</div>
+        </div>
+      </div>
+
+      <!-- Hero: Predictions Panel -->
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🎯 Next Exam Forecast & Study Priority</h2>
+          <div class="section-subtitle">Top 5 predicted topics ranked by recurrence weight, recency, and examiner habit</div>
+        </div>
+      </div>
+      <div class="predictions-grid" id="predictionsGrid">
+        <!-- populated dynamically -->
+      </div>
+
+      <!-- Trend Chart: Dumbbell comparison -->
+      <div class="chart-card">
+        <div class="section-header" style="margin: 0 0 12px 0;">
+          <div>
+            <h3 class="section-title" id="chartTitle">Topic Trajectory & Score Distribution</h3>
+            <div class="section-subtitle" id="chartSubtitle">Comparing marks allocation across the most recent examination cycles</div>
+          </div>
+        </div>
+        <div class="chart-legend" id="chartLegend">
+          <!-- populated dynamically -->
+        </div>
+        <div class="chart-svg-container" id="chartContainer">
+          <svg id="trendSvg" width="100%" height="360"></svg>
+        </div>
+      </div>
+
+      <!-- Topic Archive & Breakdown Table -->
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">📊 Topic Frequency & Evidence Archive</h2>
+          <div class="section-subtitle">Inspect historical question distribution and drill into exact question statements</div>
+        </div>
+      </div>
+
+      <div class="table-controls">
+        <input type="text" class="search-input" id="tableSearch" placeholder="Search topics or question text...">
+        <select class="filter-select" id="trendFilter">
+          <option value="all">All Trends</option>
+          <option value="staple">Staple (Tested every year)</option>
+          <option value="rising">Rising (Marks increasing)</option>
+          <option value="declining">Declining (Marks shrinking)</option>
+          <option value="emerging">Emerging (Recent appearance)</option>
+          <option value="fading">Fading (Absent recently)</option>
+          <option value="alternating-due">Alternating (Due next)</option>
+          <option value="alternating-rest">Alternating (Resting)</option>
+          <option value="single-year">Single Year of Data</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table id="topicsTable">
+          <thead>
+            <tr id="tableHeadRow">
+              <th style="width: 32px;"></th>
+              <th>Topic</th>
+              <!-- Year columns injected here -->
+              <th>Trend</th>
+              <th class="tabular">Recency Base</th>
+              <th class="tabular">Forecast Score</th>
+              <th class="tabular">Questions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- How Scoring Works Collapsible -->
+      <div class="explainer-card">
+        <details>
+          <summary class="explainer-summary">
+            <span>💡 How Scoring & Trend Intelligence Works</span>
+            <span style="color: var(--muted); font-size: 12px;">Click to expand</span>
+          </summary>
+          <div class="explainer-body">
+            <p>
+              Exam forecasting is grounded in <strong>structural curriculum design and examiner psychology</strong>.
+              Unlike objective multiple-choice exams that can touch every subtopic lightly, written theory examinations have limited question slots (often 5 to 10 problems) worth 100 marks total.
+            </p>
+            <div class="explainer-grid">
+              <div>
+                <h4 style="color: var(--text); margin-bottom: 6px;">1. Magnitude & Recency Decay</h4>
+                <p>
+                  For each topic-year, we calculate magnitude: <code>marks if marks > 0 else question_count</code>.
+                  Years are sorted chronologically and weighted with an exponential recency decay <code>w[i] = 0.7^(n-1-i)</code>, where the most recent year receives a weight of <code>1.0</code>.
+                  The <code>base</code> score is the weighted average.
+                </p>
+              </div>
+              <div>
+                <h4 style="color: var(--text); margin-bottom: 6px;">2. Trend Classification & Multipliers</h4>
+                <p>
+                  Examiners alternate or maintain key topics systematically:
+                  <br>• <strong>Staple (1.0x):</strong> Tested every single year — foundational to syllabus.
+                  <br>• <strong>Rising (1.3x):</strong> Marks strictly climbing — examiner's growing focus.
+                  <br>• <strong>Alternating-Due (1.4x):</strong> Every-other-year rhythm, skipped last cycle — high probability of returning!
+                  <br>• <strong>Emerging (1.15x):</strong> Absent previously, introduced recently.
+                  <br>• <strong>Alternating-Rest (0.4x):</strong> Every-other-year rhythm, tested last cycle — likely resting.
+                  <br>• <strong>Fading (0.5x):</strong> Tested historically, dropped from recent paper.
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Upload / Ingestion Modal -->
+  <div class="modal-backdrop" id="uploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Ingest Past Exam Paper</h3>
+        <button class="close-btn" id="closeUploadModal">&times;</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Course</label>
+          <select class="form-select" id="paperCourseSelect">
+            <!-- options dynamically added -->
+            <option value="__new__">+ New Course...</option>
+          </select>
+          <input type="text" class="form-input" id="newCourseInput" placeholder="Course ID (e.g. 18.03, cs50)" style="margin-top: 8px; display: none;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Exam Year</label>
+          <input type="number" class="form-input" id="paperYear" value="2007" min="1990" max="2030">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Paper Name / ID</label>
+        <input type="text" class="form-input" id="paperName" value="final" placeholder="e.g. exam1, midterm, final">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload File or Scanned Pages</label>
+        <div class="dropzone" id="fileDropzone">
+          <div style="font-size: 24px; margin-bottom: 6px;">📄</div>
+          <div><strong>Drop exam PDF, Word DOCX/DOC, or TXT</strong> here, or click to browse</div>
+          <div class="form-hint">Supports PDF, Word (.docx/.doc), and Text (.txt)</div>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+        </div>
+        <div id="fileUploadStatus" style="font-size: 12px; margin-top: 6px; color: var(--accent);"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Or Paste Exam Text Directly</label>
+        <textarea class="form-textarea" id="paperText" rows="6" placeholder="Problem 1 (20 pts): Evaluate the integral...&#10;Problem 2 (15 pts): Find the maximum volume of..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn" id="loadSampleTextBtn">Paste Sample Calculus Exam</button>
+        <button class="btn btn-primary" id="extractQuestionsBtn">
+          <span>Extract Questions via AI</span>
+        </button>
+      </div>
+
+      <!-- Preview of Extracted Rows -->
+      <div id="extractionPreviewSection" style="display: none; margin-top: 24px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+          <h4 style="font-size: 14px; font-weight: 700;">Extracted Questions (<span id="previewCount">0</span> rows)</h4>
+          <span style="font-size: 12px; color: var(--muted);">Review and confirm before adding</span>
+        </div>
+        <div class="preview-box">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th>Q#</th>
+                <th>Topic</th>
+                <th>Marks</th>
+                <th>Question Summary</th>
+              </tr>
+            </thead>
+            <tbody id="previewTableBody">
+              <!-- rows -->
+            </tbody>
+          </table>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+          <button class="btn btn-primary" id="confirmAddRowsBtn">Confirm & Add to Dataset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">AI Extractor Settings</h3>
+        <button class="close-btn" id="closeSettingsModal">&times;</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">LLM Provider</label>
+        <div style="display: flex; gap: 16px; margin-top: 8px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+            <input type="radio" name="providerRadio" value="claude" id="providerClaude">
+            Claude CLI (Local machine, zero key setup)
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
+            <input type="radio" name="providerRadio" value="openai" id="providerOpenAI">
+            OpenAI-Compatible Endpoint
+          </label>
+        </div>
+      </div>
+
+      <div id="openaiSettingsWrap" style="display: none; border-top: 1px solid var(--border-subtle); padding-top: 16px; margin-top: 16px;">
+        <div class="form-group">
+          <label class="form-label">Base URL</label>
+          <input type="text" class="form-input" id="settingBaseUrl" placeholder="https://api.openai.com/v1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Model Name</label>
+          <input type="text" class="form-input" id="settingModel" placeholder="gpt-4o-mini">
+        </div>
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input type="password" class="form-input" id="settingApiKey" placeholder="sk-...">
+          <div class="form-hint">Stored securely in your local browser localStorage only.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip element -->
+  <div class="chart-tooltip" id="tooltip"></div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // State
+    let allRows = [];
+    let activeCourse = null;
+    let analysisResult = null;
+    let extractedRowsPreview = [];
+    let pendingImages = [];
+
+    // Trend descriptions for tooltips
+    const TREND_LABELS = {
+      "staple": { title: "Staple", desc: "Tested every single year — essential core curriculum.", mult: "1.0x" },
+      "rising": { title: "Rising", desc: "Tested every year and marks strictly increasing.", mult: "1.3x" },
+      "declining": { title: "Declining", desc: "Tested every year but marks shrinking.", mult: "0.7x" },
+      "emerging": { title: "Emerging", desc: "Absent in earlier years, tested recently.", mult: "1.15x" },
+      "fading": { title: "Fading", desc: "Tested historically, dropped from most recent year.", mult: "0.5x" },
+      "alternating-due": { title: "Alternating (Due)", desc: "Appears every other year; missed last exam, due next!", mult: "1.4x" },
+      "alternating-rest": { title: "Alternating (Resting)", desc: "Appears every other year; tested last cycle, likely resting.", mult: "0.4x" },
+      "erratic": { title: "Erratic", desc: "Irregular pattern across examination years.", mult: "0.7x" },
+      "single-year": { title: "Single Year", desc: "Baseline estimate from only one historical exam year.", mult: "0.8x" }
+    };
+
+    // DOM Elements
+    const apiStatusBadge = document.getElementById("apiStatusBadge");
+    const apiDot = document.getElementById("apiDot");
+    const apiStatusText = document.getElementById("apiStatusText");
+    const courseTabs = document.getElementById("courseTabs");
+    const kpiPapers = document.getElementById("kpiPapers");
+    const kpiYears = document.getElementById("kpiYears");
+    const kpiYearsList = document.getElementById("kpiYearsList");
+    const kpiQuestions = document.getElementById("kpiQuestions");
+    const kpiTopics = document.getElementById("kpiTopics");
+    const predictionsGrid = document.getElementById("predictionsGrid");
+    const topicsTable = document.getElementById("topicsTable");
+    const tableHeadRow = document.getElementById("tableHeadRow");
+    const tableBody = document.getElementById("tableBody");
+    const tableSearch = document.getElementById("tableSearch");
+    const trendFilter = document.getElementById("trendFilter");
+    const trendSvg = document.getElementById("trendSvg");
+    const chartLegend = document.getElementById("chartLegend");
+    const chartTitle = document.getElementById("chartTitle");
+    const tooltip = document.getElementById("tooltip");
+    const toastEl = document.getElementById("toast");
+
+    // Modals
+    const uploadModal = document.getElementById("uploadModal");
+    const settingsModal = document.getElementById("settingsModal");
+    const openUploadBtn = document.getElementById("openUploadBtn");
+    const openSettingsBtn = document.getElementById("openSettingsBtn");
+    const closeUploadModal = document.getElementById("closeUploadModal");
+    const closeSettingsModal = document.getElementById("closeSettingsModal");
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    const reloadSeedBtn = document.getElementById("reloadSeedBtn");
+
+    // Ingestion inputs
+    const paperCourseSelect = document.getElementById("paperCourseSelect");
+    const newCourseInput = document.getElementById("newCourseInput");
+    const paperYear = document.getElementById("paperYear");
+    const paperName = document.getElementById("paperName");
+    const paperText = document.getElementById("paperText");
+    const fileDropzone = document.getElementById("fileDropzone");
+    const fileInput = document.getElementById("fileInput");
+    const fileUploadStatus = document.getElementById("fileUploadStatus");
+    const extractQuestionsBtn = document.getElementById("extractQuestionsBtn");
+    const loadSampleTextBtn = document.getElementById("loadSampleTextBtn");
+    const extractionPreviewSection = document.getElementById("extractionPreviewSection");
+    const previewCount = document.getElementById("previewCount");
+    const previewTableBody = document.getElementById("previewTableBody");
+    const confirmAddRowsBtn = document.getElementById("confirmAddRowsBtn");
+
+    // Settings inputs
+    const providerClaude = document.getElementById("providerClaude");
+    const providerOpenAI = document.getElementById("providerOpenAI");
+    const openaiSettingsWrap = document.getElementById("openaiSettingsWrap");
+    const settingBaseUrl = document.getElementById("settingBaseUrl");
+    const settingModel = document.getElementById("settingModel");
+    const settingApiKey = document.getElementById("settingApiKey");
+    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
+
+    // Toast helper
+    function showToast(msg, duration = 3000) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      setTimeout(() => toastEl.classList.remove("show"), duration);
+    }
+
+    // Theme toggle
+    themeToggleBtn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("examoracle-theme", next);
+      renderChart();
+    });
+
+    // Init Theme
+    const savedTheme = localStorage.getItem("examoracle-theme");
+    if (savedTheme) {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+
+    // Settings management
+    function getSettings() {
+      try {
+        return JSON.parse(localStorage.getItem("examoracle-settings")) || {
+          provider: "claude",
+          base_url: "https://api.openai.com/v1",
+          model: "gpt-4o-mini",
+          api_key: ""
+        };
+      } catch (e) {
+        return { provider: "claude" };
+      }
+    }
+
+    function saveSettings() {
+      const settings = {
+        provider: providerClaude.checked ? "claude" : "openai",
+        base_url: settingBaseUrl.value.trim() || "https://api.openai.com/v1",
+        model: settingModel.value.trim() || "gpt-4o-mini",
+        api_key: settingApiKey.value.trim()
+      };
+      localStorage.setItem("examoracle-settings", JSON.stringify(settings));
+      settingsModal.classList.remove("open");
+      showToast("Settings saved successfully!");
+    }
+
+    function loadSettingsToUI() {
+      const s = getSettings();
+      if (s.provider === "openai") {
+        providerOpenAI.checked = true;
+        openaiSettingsWrap.style.display = "block";
+      } else {
+        providerClaude.checked = true;
+        openaiSettingsWrap.style.display = "none";
+      }
+      settingBaseUrl.value = s.base_url || "";
+      settingModel.value = s.model || "";
+      settingApiKey.value = s.api_key || "";
+    }
+
+    providerClaude.addEventListener("change", () => openaiSettingsWrap.style.display = "none");
+    providerOpenAI.addEventListener("change", () => openaiSettingsWrap.style.display = "block");
+    saveSettingsBtn.addEventListener("click", saveSettings);
+    openSettingsBtn.addEventListener("click", () => {
+      loadSettingsToUI();
+      settingsModal.classList.add("open");
+    });
+    closeSettingsModal.addEventListener("click", () => settingsModal.classList.remove("open"));
+
+    // Check Health
+    async function checkHealth() {
+      try {
+        const res = await fetch("/health");
+        const data = await res.json();
+        apiDot.className = "status-dot";
+        apiStatusText.textContent = data.claude_cli ? "API Live (Claude CLI ready)" : "API Live";
+      } catch (e) {
+        apiDot.className = "status-dot offline";
+        apiStatusText.textContent = "API Offline";
+      }
+    }
+
+    // Load Data
+    async function initData() {
+      await checkHealth();
+      const stored = localStorage.getItem("examoracle-rows");
+      if (stored) {
+        try {
+          allRows = JSON.parse(stored);
+          if (allRows && allRows.length) {
+            await runAnalysis();
+            return;
+          }
+        } catch (e) {}
+      }
+      // Load Seed from server
+      await resetToSeed();
+    }
+
+    
+    // Embedded seed dataset (MIT OCW) for instant static hosting on Vercel / GitHub
+    const EMBEDDED_SEED = [{"course": "18.01", "year": 2005, "paper": "exam1", "q": "1", "topic": "definition-of-derivative", "marks": 15, "text": "Use limit definition of derivative to differentiate y = x + 1/x"}, {"course": "18.01", "year": 2005, "paper": "exam1", "q": "2", "topic": "differentiation-rules", "marks": 10, "text": "Compute first, second, and third derivatives of e^{-x^2/2}"}, {"course": "18.01", "year": 2005, "paper": "exam1", "q": "3", "topic": "implicit-differentiation", "marks": 15, "text": "Find tangent line to implicit curve 2x^3 - 9xy + 2y^3 = 0 at (1,2)"}, {"course": "18.01", "year": 2005, "paper": "exam1", "q": "4", "topic": "tangent-lines", "marks": 20, "text": "Find tangent line to y = x + 1/x passing through external point (0,4)"}, {"course": "18.01", "year": 2005, "paper": "exam1", "q": "5", "topic": "continuity-differentiability", "marks": 25, "text": "Match piecewise crash-test position function for continuity; find impact velocity"}, {"course": "18.01", "year": 2005, "paper": "exam1", "q": "6", "topic": "differentiation-rules", "marks": 15, "text": "Differentiate four functions (quotient, product-log, radical, log10)"}, {"course": "18.01", "year": 2005, "paper": "exam2", "q": "1", "topic": "differentiation-rules", "marks": 20, "text": "Differentiate trig quotient and composite radical expressions"}, {"course": "18.01", "year": 2005, "paper": "exam2", "q": "2", "topic": "graphing-curve-sketching", "marks": 40, "text": "Full curve sketch of sqrt(x + 1/sqrt x): asymptotes, extrema, inflection, graph"}, {"course": "18.01", "year": 2005, "paper": "exam2", "q": "3", "topic": "optimization", "marks": 30, "text": "Maximize volume of box folded from square metal sheets"}, {"course": "18.01", "year": 2005, "paper": "exam2", "q": "4", "topic": "approximation-linearization", "marks": 10, "text": "Find quadratic approximation of sqrt(2 - cos \u03b8) near \u03b8 = 0"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "1", "topic": "related-rates", "marks": 20, "text": "Rate at which particle moving along x-axis recedes from fixed point"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "2", "topic": "riemann-sums-numerical-integration", "marks": 30, "text": "Right-endpoint Riemann sum for 1/sqrt(1+x^2); evaluate limit using antiderivative"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "3", "topic": "differential-equations", "marks": 25, "text": "Solve separable ODE y' = e^{x+2y}, y(0) = 0"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "4a", "topic": "fundamental-theorem-calculus", "marks": 5, "text": "Integrate polynomial over [0, sqrt(5)]"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "4b", "topic": "integration-substitution", "marks": 5, "text": "Integrate x/sqrt(1+x^2) from 0 to 10 by substitution"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "4c", "topic": "trigonometric-integrals-substitution", "marks": 5, "text": "Integrate sin^7 \u03b8 over [-\u03c0/2, \u03c0/2]"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "4d", "topic": "integration-substitution", "marks": 5, "text": "Integrate ln(t^2)/t by substitution"}, {"course": "18.01", "year": 2005, "paper": "exam3", "q": "4e", "topic": "trigonometric-integrals-substitution", "marks": 5, "text": "Integrate sin(2t)/cos t from 0 to \u03c0/4"}, {"course": "18.01", "year": 2005, "paper": "exam4", "q": "1", "topic": "volumes-of-revolution", "marks": 25, "text": "Volume of solid revolved about x-axis under scaled sine curve"}, {"course": "18.01", "year": 2005, "paper": "exam4", "q": "2", "topic": "volumes-of-revolution", "marks": 25, "text": "Volume of solid revolved about y-axis using shells"}, {"course": "18.01", "year": 2005, "paper": "exam4", "q": "3", "topic": "arc-length-surface-area", "marks": 25, "text": "Surface area of revolution of y = x^3 about x-axis"}, {"course": "18.01", "year": 2005, "paper": "exam4", "q": "4", "topic": "polar-coordinates", "marks": 25, "text": "Sketch polar curve r = sin \u03b8 sin(\u03b8 + \u03c0/2); label endpoints and tangent slopes"}, {"course": "18.01", "year": 2005, "paper": "exam5", "q": "1", "topic": "integration-by-parts", "marks": 25, "text": "Antiderivative of x^3 e^{-x^2} by parts"}, {"course": "18.01", "year": 2005, "paper": "exam5", "q": "2", "topic": "partial-fractions", "marks": 20, "text": "Antiderivative of rational function via polynomial division and factoring"}, {"course": "18.01", "year": 2005, "paper": "exam5", "q": "3", "topic": "partial-fractions", "marks": 20, "text": "Partial fraction decomposition of (x+3)/(x-1)^2 and its antiderivative"}, {"course": "18.01", "year": 2005, "paper": "exam5", "q": "4", "topic": "trigonometric-integrals-substitution", "marks": 25, "text": "Find domain and antiderivative of sqrt(2ax - x^2) via trig substitution"}, {"course": "18.01", "year": 2005, "paper": "exam5", "q": "5", "topic": "differentiation-rules", "marks": 10, "text": "Differentiate sinh t and arcsinh x"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "1", "topic": "definition-of-derivative", "marks": 25, "text": "Derivative of e^x from limit definition of derivative"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "2", "topic": "graphing-curve-sketching", "marks": 25, "text": "Sketch (x^2-2)/(x^2-1) with asymptotes, extrema, inflection points"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "3", "topic": "optimization", "marks": 25, "text": "Maximize aerosol can volume for fixed surface area"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "4a", "topic": "riemann-sums-numerical-integration", "marks": 5, "text": "Write general right-endpoint Riemann sum formula on [0,1]"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "4b", "topic": "riemann-sums-numerical-integration", "marks": 5, "text": "Find function whose Riemann sum equals given sum k/(k^2+n^2)"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "4c", "topic": "fundamental-theorem-calculus", "marks": 10, "text": "Evaluate integral of that function via Fundamental Theorem of Calculus"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "4d", "topic": "riemann-sums-numerical-integration", "marks": 5, "text": "Evaluate limit of sum k/(k^2+n^2) as a Riemann sum"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "5", "topic": "volumes-of-revolution", "marks": 25, "text": "Volume of hourglass (hyperbola revolved about y-axis) relative to cylinder"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "6", "topic": "trigonometric-integrals-substitution", "marks": 10, "text": "Antiderivative of (x+1)/sqrt(x^2-4x) by hyperbolic substitution"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "7", "topic": "limits", "marks": 25, "text": "Evaluate three limits, including (1-cos sqrt x)^sin x and sinh x/sin x"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "8", "topic": "improper-integrals", "marks": 25, "text": "Evaluate improper integrals of 1/x^s and te^{-t^2}"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "9", "topic": "taylor-series", "marks": 25, "text": "Taylor series expansion of cosh x about x = 0"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "10a", "topic": "integration-substitution", "marks": 5, "text": "Integrate 1/(t^{2/3}(1+t^{2/3})) by substitution"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "10b", "topic": "trigonometric-integrals-substitution", "marks": 5, "text": "Integrate tan^2 \u03b8 using trig identity"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "10c", "topic": "trigonometric-integrals-substitution", "marks": 5, "text": "Integrate 1/(x^2+4x+8) by completing the square"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "10d", "topic": "definite-integral-applications", "marks": 5, "text": "Use odd-function symmetry to evaluate integral of x/sqrt(1+x^10)"}, {"course": "18.01", "year": 2005, "paper": "final", "q": "10e", "topic": "integration-by-parts", "marks": 5, "text": "Integrate x(ln x)^2 by parts"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "1", "topic": "tangent-lines", "marks": 10, "text": "Find tangent line to y = x^(1/3) at x = 1"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "2", "topic": "differentiation-rules", "marks": 25, "text": "Differentiate four functions: x/(1-x), cos(2x)/x, e^2 f(x)g(x), ln(sin x)"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "3", "topic": "implicit-differentiation", "marks": 15, "text": "Find dy/dx for y defined implicitly by y^4 + xy = 4"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "4", "topic": "graphing-curve-sketching", "marks": 15, "text": "Sketch the graph of the derivative of a given function"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "5", "topic": "continuity-differentiability", "marks": 15, "text": "Find a and b making a piecewise function differentiable at x = 1"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "6", "topic": "limits", "marks": 10, "text": "Evaluate two limits by relating them to a derivative"}, {"course": "18.01", "year": 2006, "paper": "exam1", "q": "7", "topic": "definition-of-derivative", "marks": 10, "text": "Derive d/dx a^x = M(a) a^x from the definition of the derivative"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "1", "topic": "approximation-linearization", "marks": 15, "text": "Estimate sin(pi + 1/100) and sqrt(101) to two decimal places"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "2", "topic": "graphing-curve-sketching", "marks": 20, "text": "Sketch y = 4/x + x + 1, labeling critical and inflection points"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "3", "topic": "optimization", "marks": 20, "text": "Maximize area of triangular enclosure with two fixed fence sides"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "4", "topic": "related-rates", "marks": 15, "text": "Find rate of change of viewing angle to rising rocket"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "5a", "topic": "integration-substitution", "marks": 10, "text": "Evaluate indefinite integrals of cos(3x) and x e^(x^2)"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "5b", "topic": "differential-equations", "marks": 10, "text": "Solve y' = 1/y^3 with y(0) = 1"}, {"course": "18.01", "year": 2006, "paper": "exam2", "q": "6", "topic": "mean-value-theorem", "marks": 10, "text": "Use mean value theorem to bound f(1) given f'(x) = e^(x^2)"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "1a", "topic": "integration-substitution", "marks": null, "text": "Evaluate integral of x/(1+x^2)^2 from 0 to 2"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "1b", "topic": "trigonometric-integrals-substitution", "marks": null, "text": "Evaluate integral of sin^6(x) cos(x) from -pi/2 to pi/2"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "2", "topic": "riemann-sums-numerical-integration", "marks": 20, "text": "Approximate integral of cos x by Riemann, trapezoid, Simpson rules"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "3", "topic": "volumes-of-revolution", "marks": 20, "text": "Find volume of solid revolving y = cos(x^2) region about y-axis"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "4", "topic": "definite-integral-applications", "marks": 20, "text": "Fraction of students sleeping less than a/2; weighted average score"}, {"course": "18.01", "year": 2006, "paper": "exam3", "q": "5", "topic": "fundamental-theorem-calculus", "marks": 20, "text": "Analyze F(x) = integral of t sin t dt: critical points, extrema, signs"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "1", "topic": "partial-fractions", "marks": 15, "text": "Evaluate integral of dx/(x(x+1)^2) using partial fractions"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "2", "topic": "integration-by-parts", "marks": 15, "text": "Evaluate integral of (ln x)^2 dx"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "3", "topic": "trigonometric-integrals-substitution", "marks": 20, "text": "Use trig substitution to evaluate integral of dx/(4+x^2)^(3/2)"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "4", "topic": "arc-length-surface-area", "marks": 20, "text": "Arc length formula for y = 2x+1 and surface area of its revolution"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "5", "topic": "polar-coordinates", "marks": 15, "text": "Sketch polar spiral r = theta/2 and find area of region 0 <= r <= theta/2"}, {"course": "18.01", "year": 2006, "paper": "exam4", "q": "6", "topic": "polar-coordinates", "marks": 15, "text": "Find polar equation r = f(theta) for line y = x - 1 and theta range"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "1", "topic": "vectors-dot-cross", "marks": 15, "text": "Express cube diagonal vectors in i,j,k; find cosine of angle between them"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "2", "topic": "parametric-curves-3d", "marks": 10, "text": "Compute velocity and speed of point with helical position vector"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "3", "topic": "matrices-determinants", "marks": 15, "text": "Find entries of matrix inverse, solve linear system, find c making matrix singular"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "4", "topic": "parametric-curves-3d", "marks": 15, "text": "Find parametric equations for midpoint of sliding ladder using angle parameter"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "5a", "topic": "vectors-dot-cross", "marks": 10, "text": "Find area of space triangle with three given vertices via cross product"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "5b", "topic": "lines-planes", "marks": 15, "text": "Find plane through three points and its intersection with a parallel line"}, {"course": "18.02", "year": 2007, "paper": "prac1a", "q": "6", "topic": "vectors-dot-cross", "marks": 20, "text": "Differentiate dot products of position, velocity, acceleration vectors; constant-length consequences"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "1", "topic": "vectors-dot-cross", "marks": 15, "text": "Express vectors between axis points in i,j,k; find cosine of angle PQR"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "2a", "topic": "vectors-dot-cross", "marks": 10, "text": "Find area of triangle PQR via cross product"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "2b", "topic": "lines-planes", "marks": 10, "text": "Find plane through three points; test if a line is parallel to it"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "3", "topic": "parametric-curves-3d", "marks": 25, "text": "Parametrize ladybug trajectory on moving VW; find where speed is largest and smallest"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "4", "topic": "matrices-determinants", "marks": 30, "text": "Compute determinant, find inverse entries, solve linear system, differentiate solution"}, {"course": "18.02", "year": 2007, "paper": "prac1b", "q": "5", "topic": "lines-planes", "marks": 10, "text": "Express point-on-plane condition via normal vector; show velocity perpendicular to normal"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "1", "topic": "gradient-directional-derivatives", "marks": 10, "text": "Find gradient at a point and linear approximation for small changes"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "2", "topic": "gradient-directional-derivatives", "marks": 20, "text": "Estimate directional derivative from topographic level curves; locate point with given partials"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "3", "topic": "tangent-planes", "marks": 10, "text": "Find tangent plane to surface x^3*y + z^2 = 3 at given point"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "4", "topic": "optimization-multivariable", "marks": 20, "text": "Maximize box volume with corner on paraboloid; find and classify critical points"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "5", "topic": "lagrange-multipliers", "marks": 15, "text": "Write and solve Lagrange multiplier equations for box volume problem"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "6", "topic": "chain-rule-multivariable", "marks": 10, "text": "Express partial derivatives of w = f(u,v) via chain rule in x, y, f_u, f_v"}, {"course": "18.02", "year": 2007, "paper": "prac2a", "q": "7", "topic": "partial-derivatives", "marks": 15, "text": "Find partial derivative of w under implicit constraint and evaluate numerically"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "1", "topic": "gradient-directional-derivatives", "marks": 15, "text": "Find gradient, linear approximation, and directional derivative of f at a point"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "1b", "topic": "tangent-planes", "marks": 5, "text": "Write tangent plane equation to graph of f at a point"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "2", "topic": "gradient-directional-derivatives", "marks": 10, "text": "Mark level-curve portion where partial derivative f_y is nonnegative on contour plot"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "3", "topic": "optimization-multivariable", "marks": 20, "text": "Find and classify critical points of w; maximize over first quadrant"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "4", "topic": "chain-rule-multivariable", "marks": 20, "text": "Express partials of w(u,v) and combination x*w_x + y*w_y via chain rule"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "5a", "topic": "lagrange-multipliers", "marks": 10, "text": "Set up Lagrange multiplier equations for largest x on a surface"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "5b", "topic": "tangent-planes", "marks": 5, "text": "Find tangent plane to surface at point where x is largest"}, {"course": "18.02", "year": 2007, "paper": "prac2b", "q": "6", "topic": "partial-derivatives", "marks": 15, "text": "Take total differentials; find dy/dx along intersection curve of two surfaces"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "1", "topic": "multiple-integrals", "marks": 15, "text": "Set up center of mass integrals for a triangle with uniform density"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "2", "topic": "polar-cylindrical-spherical-integration", "marks": 15, "text": "Find polar moment of inertia of unit disk with density equal to distance from y-axis"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "3", "topic": "vector-fields-line-integrals", "marks": 15, "text": "Find constants making field conservative, find potential, evaluate line integral"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "4", "topic": "vector-fields-line-integrals", "marks": 10, "text": "Evaluate line integral of vector field along parabola y = x^2"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "5", "topic": "multiple-integrals", "marks": 20, "text": "Change variables u = x^2/y, v = xy; compute Jacobian and area of region"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "6", "topic": "greens-theorem", "marks": 10, "text": "Express closed line integral of M dx as double integral; choose M for given mass"}, {"course": "18.02", "year": 2007, "paper": "prac3a", "q": "7", "topic": "greens-theorem", "marks": 15, "text": "Use normal form of Green's theorem to compute flux out of region"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "1", "topic": "multiple-integrals", "marks": null, "text": "Sketch region of integration and exchange order of integration"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "2", "topic": "polar-cylindrical-spherical-integration", "marks": null, "text": "Find mass and center of mass integrals for half-annulus with given density"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "3", "topic": "vector-fields-line-integrals", "marks": null, "text": "Show field conservative, find potential, evaluate line integral along curve"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "4", "topic": "greens-theorem", "marks": null, "text": "Set up work integral around unit circle; evaluate using Green's theorem"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "5", "topic": "greens-theorem", "marks": null, "text": "Compute flux of vector field out of rectangle; compare fluxes through boundary parts"}, {"course": "18.02", "year": 2007, "paper": "prac3b", "q": "6", "topic": "multiple-integrals", "marks": null, "text": "Find volume between plane and paraboloid surface using change of variables"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "1", "topic": "vector-fields-line-integrals", "marks": 15, "text": "Show field conservative and find potential; show another field not conservative"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "2", "topic": "flux-divergence-curl", "marks": 20, "text": "Compute flux through sphere outside cylinder; use divergence theorem for volume"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "3", "topic": "other:stokes-theorem", "marks": 20, "text": "Evaluate line integral over boundary circle; compute curl and related flux integral"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "4", "topic": "flux-divergence-curl", "marks": 15, "text": "Use divergence theorem to compute flux across closed surface x^4+y^4+z^4=1"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "5", "topic": "polar-cylindrical-spherical-integration", "marks": 15, "text": "Express surface in spherical coordinates; set up volume integral inside it"}, {"course": "18.02", "year": 2007, "paper": "prac4a", "q": "6", "topic": "flux-divergence-curl", "marks": 15, "text": "Compute flux of F upward across surface z = xy over unit disk"}, {"course": "18.02", "year": 2007, "paper": "prac4b", "q": "1", "topic": "polar-cylindrical-spherical-integration", "marks": 10, "text": "Set up triple integral in cylindrical coordinates for moment of inertia of cylinder"}, {"course": "18.02", "year": 2007, "paper": "prac4b", "q": "2", "topic": "polar-cylindrical-spherical-integration", "marks": 20, "text": "Write sphere and plane equations in spherical coordinates; set up volume integral"}, {"course": "18.02", "year": 2007, "paper": "prac4b", "q": "3", "topic": "vector-fields-line-integrals", "marks": 20, "text": "Show vector field conservative and find potential function systematically"}, {"course": "18.02", "year": 2007, "paper": "prac4b", "q": "4", "topic": "flux-divergence-curl", "marks": 25, "text": "Compute flux across paraboloid directly and via divergence theorem"}, {"course": "18.02", "year": 2007, "paper": "prac4b", "q": "5", "topic": "other:stokes-theorem", "marks": 25, "text": "Compute curl; show flux of curl through sphere portion and line integral vanish"}, {"course": "18.06", "year": 2010, "paper": "exam1", "q": "1", "topic": "solutions-to-axb", "marks": 24, "text": "Given complete solution of Ax=b, find R and d, then recover A and b via elimination matrix."}, {"course": "18.06", "year": 2010, "paper": "exam1", "q": "2a", "topic": "column-space-null-space", "marks": 26, "text": "Find special solutions and describe nullspace; describe column space of given matrix."}, {"course": "18.06", "year": 2010, "paper": "exam1", "q": "2c", "topic": "rank", "marks": 10, "text": "Find reduced row echelon form of 6 by 8 block matrix built from repeated A."}, {"course": "18.06", "year": 2010, "paper": "exam1", "q": "3", "topic": "solutions-to-axb", "marks": 16, "text": "For rank-3 3x5 matrix, decide solvability/uniqueness of Ax=b; describe column space and nullspace."}, {"course": "18.06", "year": 2010, "paper": "exam1", "q": "4", "topic": "column-space-null-space", "marks": 24, "text": "Use solutions of Ax=b to decide whether a given vector b lies in column space of A."}, {"course": "18.06", "year": 2010, "paper": "exam2", "q": "1", "topic": "projections", "marks": 30, "text": "Projection matrix onto line; its column space, nullspace, and eigenvectors/eigenvalues."}, {"course": "18.06", "year": 2010, "paper": "exam2", "q": "2", "topic": "least-squares", "marks": 30, "text": "Least squares equation for x-hat, A=QR solution form, projection onto orthonormal plane."}, {"course": "18.06", "year": 2010, "paper": "exam2", "q": "3ab", "topic": "determinants", "marks": null, "text": "Determinant of matrix with zero diagonal and -1 elsewhere; (1,1) entry of its inverse."}, {"course": "18.06", "year": 2010, "paper": "exam2", "q": "3cd", "topic": "eigenvalues-eigenvectors", "marks": null, "text": "Find orthogonal eigenvectors for eigenvalue 1 and the remaining eigenvalue of A_n."}, {"course": "18.06", "year": 2010, "paper": "exam3", "q": "1", "topic": "eigenvalues-eigenvectors", "marks": 40, "text": "Symmetric Householder matrix H=I-2uuT: show H^2=I, find eigenvalues, diagonalizability, trace."}, {"course": "18.06", "year": 2010, "paper": "exam3", "q": "2", "topic": "positive-definite-matrices", "marks": 30, "text": "Show A inverse and QAQT positive definite; show block matrix positive semidefinite."}, {"course": "18.06", "year": 2010, "paper": "exam3", "q": "3a", "topic": "eigenvalues-eigenvectors", "marks": null, "text": "Find eigenvalues and eigenvectors of [[0,-1],[4,0]]; expand u(0) in eigenvectors."}, {"course": "18.06", "year": 2010, "paper": "exam3", "q": "3b", "topic": "matrix-powers-exponentials", "marks": null, "text": "Solve du/dt = Au using eigenvectors of A starting from given u(0)."}, {"course": "18.06", "year": 2010, "paper": "exam3", "q": "3c", "topic": "svd", "marks": null, "text": "Find the SVD A=U Sigma V^T via eigenvectors of A^T A and then U."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "1a", "topic": "systems-of-equations", "marks": null, "text": "Find lower and upper triangular factors L and U so that A=LU."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "1b", "topic": "rank", "marks": null, "text": "Find rref(A) and count independent columns of A."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "1c", "topic": "column-space-null-space", "marks": null, "text": "Find a basis for the nullspace of A."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "1d", "topic": "solutions-to-axb", "marks": null, "text": "Write complete solution to Ax=b when b is sum of columns of A."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "2", "topic": "least-squares", "marks": 11, "text": "Best least squares fit of y=C+D 2^t to three given points; find C and D."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "3", "topic": "linear-transformations", "marks": 11, "text": "Determine matrix A from equations Av_i=b_i; its column space and invertibility."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "4", "topic": "matrix-powers-exponentials", "marks": 11, "text": "Markov preference matrix limit of A^k; solve coupled differential equations; straight-line solutions."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "5ab", "topic": "linear-transformations", "marks": null, "text": "Find matrix for 120-degree rotation about axis x=y=z; explain A^3=I and eigenvalues."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "5c", "topic": "eigenvalues-eigenvectors", "marks": null, "text": "Eigenvalues and eigenvectors of projection onto plane x+2y+z=0, without computing P."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "6a", "topic": "eigenvalues-eigenvectors", "marks": null, "text": "Eigenvalues and orthonormal eigenvectors of A^T A and AA^T for given 3x2 matrix."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "6b", "topic": "gram-schmidt", "marks": null, "text": "Apply Gram-Schmidt orthonormalization to columns of a rank-one matrix."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "6c", "topic": "positive-definite-matrices", "marks": null, "text": "Why AA^T cannot be positive definite when m>n; test for A^T A positive definiteness."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "7", "topic": "determinants", "marks": 11, "text": "Determinants of three 4x4 matrices, including cofactor and parameter-dependent determinant."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "8a", "topic": "similar-matrices", "marks": null, "text": "Prove that if A^k approaches 0 then similar matrix B^k also approaches 0."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "8bc", "topic": "diagonalization", "marks": null, "text": "Show matrices diagonalized by fixed S form a subspace; find bases for it and diagonal matrices."}, {"course": "18.06", "year": 2010, "paper": "final", "q": "9", "topic": "other:incidence-matrix-networks", "marks": 11, "text": "Incidence matrix of square network: rank, nullspaces, solve A^T A v=0 for voltages and currents."}];
+
+    // Client-side Trend Intelligence Engine (runs in browser when backend is remote or static on Vercel)
+    const TREND_MULTS = {
+      "staple": 1.0, "rising": 1.3, "emerging": 1.15, "declining": 0.7,
+      "fading": 0.5, "alternating-due": 1.4, "alternating-rest": 0.4,
+      "erratic": 0.7, "single-year": 0.8
+    };
+
+    function classifyTrendJS(n, mags, presence) {
+      if (n === 1) return "single-year";
+      if (presence.every(Boolean)) {
+        if (n >= 3 && mags.every((m, i) => i === 0 || mags[i - 1] < m)) return "rising";
+        if (n >= 3 && mags.every((m, i) => i === 0 || mags[i - 1] > m)) return "declining";
+        return "staple";
+      }
+      if (n >= 3) {
+        const idx = presence.map((p, i) => p ? i : -1).filter(i => i >= 0);
+        if (idx.length >= 2 && idx.slice(1).every((curr, i) => curr - idx[i] > 1)) {
+          return presence[presence.length - 1] ? "alternating-rest" : "alternating-due";
+        }
+      }
+      if (presence[presence.length - 1]) return "emerging";
+      return "fading";
+    }
+
+    function humanizeJS(topic) {
+      const small = new Set(["and", "of", "the", "by", "for", "to", "a", "an"]);
+      const words = topic.replace("other:", "").split("-").filter(Boolean);
+      return words.map(w => small.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    }
+
+    function makeEvidenceJS(trend, years, presentYears) {
+      const yl = years.join(", ");
+      const last = presentYears.length ? presentYears[presentYears.length - 1] : (years[years.length - 1] || "unknown");
+      if (trend === "staple") return `Tested every year (${yl})`;
+      if (trend === "rising") return `Tested every year, marks rising (${yl})`;
+      if (trend === "declining") return `Tested every year, marks declining (${yl})`;
+      if (trend === "emerging") {
+        const absent = years.filter(y => !presentYears.includes(y)).join(", ");
+        return `Absent in ${absent}; tested ${last}`;
+      }
+      if (trend === "fading") return `Not tested since ${last}`;
+      if (trend === "alternating-due") return `Appears roughly every other year — last tested ${last}, due next`;
+      if (trend === "alternating-rest") return `Appears roughly every other year — tested ${last}, likely resting`;
+      if (trend === "erratic") return `No clear pattern (tested ${presentYears.join(", ")})`;
+      return `Only one year of data (${years[0] || 'unknown'})`;
+    }
+
+    function analyzeClientSide(rows) {
+      const grouped = {};
+      rows.forEach(r => {
+        if (!r || !r.course) return;
+        const c = String(r.course).trim();
+        if (!c) return;
+        if (!grouped[c]) grouped[c] = [];
+        grouped[c].push(r);
+      });
+
+      const courses = {};
+      Object.keys(grouped).forEach(c => {
+        const crows = grouped[c];
+        const yearSet = new Set();
+        crows.forEach(r => {
+          const y = parseInt(r.year);
+          if (!isNaN(y)) yearSet.add(y);
+        });
+        const years = Array.from(yearSet).sort((a, b) => a - b);
+        const n = years.length;
+        if (n === 0) return;
+        const weights = years.map((_, i) => Math.pow(0.7, n - 1 - i));
+        const sumWeights = weights.reduce((a, b) => a + b, 0);
+
+        const papersSet = new Set();
+        crows.forEach(r => papersSet.add(`${r.year}-${r.paper || ""}`));
+
+        const byTopic = {};
+        crows.forEach(r => {
+          const top = String(r.topic || "other");
+          if (!byTopic[top]) byTopic[top] = [];
+          byTopic[top].push(r);
+        });
+
+        const topicsOut = [];
+        Object.keys(byTopic).forEach(top => {
+          const trows = byTopic[top];
+          const byYear = {};
+          const mags = [];
+
+          years.forEach(y => {
+            const yr = trows.filter(r => parseInt(r.year) === y);
+            if (yr.length) {
+              const markList = yr.map(r => r.marks).filter(m => typeof m === "number" && !isNaN(m));
+              const mSum = markList.length ? markList.reduce((a, b) => a + b, 0) : null;
+              byYear[String(y)] = { count: yr.length, marks: mSum };
+              mags.push((mSum !== null && mSum > 0) ? mSum : yr.length);
+            } else {
+              mags.push(0);
+            }
+          });
+
+          const base = mags.reduce((acc, m, i) => acc + m * weights[i], 0) / sumWeights;
+          const presence = mags.map(m => m > 0);
+          const presentYears = years.filter((_, i) => presence[i]);
+          const trend = classifyTrendJS(n, mags, presence);
+          const score = base * (TREND_MULTS[trend] || 1.0);
+
+          topicsOut.push({
+            topic: top,
+            label: humanizeJS(top),
+            by_year: byYear,
+            trend: trend,
+            base: Math.round(base * 10) / 10,
+            score: Math.round(score * 10) / 10,
+            evidence: makeEvidenceJS(trend, years, presentYears),
+            questions: trows.sort((a, b) => (parseInt(a.year) || 0) - (parseInt(b.year) || 0))
+          });
+        });
+
+        topicsOut.sort((a, b) => b.score - a.score);
+
+        const predictions = [];
+        topicsOut.slice(0, 5).forEach((t, idx) => {
+          const testedYears = Object.keys(t.by_year).filter(y => t.by_year[y].count > 0).map(Number);
+          const lastTested = testedYears.length ? Math.max(...testedYears) : Math.max(...Object.keys(t.by_year).map(Number));
+          const recent = t.by_year[String(lastTested)] || { count: 1 };
+
+          const samples = [];
+          t.questions.forEach(q => {
+            if (samples.length < 2 && String(q.year) === String(lastTested) && q.text && !samples.includes(q.text)) {
+              samples.push(q.text);
+            }
+          });
+          t.questions.forEach(q => {
+            if (samples.length < 2 && q.text && !samples.includes(q.text)) {
+              samples.push(q.text);
+            }
+          });
+
+          predictions.push({
+            rank: idx + 1,
+            topic: t.topic,
+            label: t.label,
+            trend: t.trend,
+            expected_marks: Math.round(t.base),
+            expected_questions: Math.max(1, recent.count || 1),
+            score: t.score,
+            evidence: t.evidence,
+            sample_questions: samples
+          });
+        });
+
+        courses[c] = {
+          years: years,
+          paper_count: papersSet.size,
+          question_count: crows.length,
+          topics: topicsOut,
+          predictions: predictions
+        };
+      });
+
+      return { courses: courses };
+    }
+
+    async function resetToSeed() {
+      try {
+        const res = await fetch("/seed").catch(() => null);
+        if (res && res.ok) {
+          allRows = await res.json();
+        } else {
+          // Fallback to embedded seed for Vercel static deployment
+          allRows = EMBEDDED_SEED;
+        }
+        localStorage.setItem("examoracle-rows", JSON.stringify(allRows));
+        showToast(`Loaded ${allRows.length} seed questions from MIT OCW`);
+        await runAnalysis();
+      } catch (e) {
+        allRows = EMBEDDED_SEED;
+        localStorage.setItem("examoracle-rows", JSON.stringify(allRows));
+        await runAnalysis();
+      }
+    }
+
+    reloadSeedBtn.addEventListener("click", resetToSeed);
+
+    // Run Analysis Engine via API
+    async function runAnalysis() {
+      if (!allRows || !allRows.length) {
+        analysisResult = { courses: {} };
+        renderUI();
+        return;
+      }
+      try {
+        const res = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rows: allRows })
+        }).catch(() => null);
+
+        if (res && res.ok) {
+          analysisResult = await res.json();
+        } else {
+          // Compute client-side (works directly on Vercel)
+          analysisResult = analyzeClientSide(allRows);
+        }
+        
+        // Pick active course (default: course with most years)
+        const courses = Object.keys(analysisResult.courses || {});
+        if (!courses.length) {
+          activeCourse = null;
+        } else if (!activeCourse || !courses.includes(activeCourse)) {
+          let best = courses[0];
+          let maxYears = 0;
+          for (const c of courses) {
+            const yCount = analysisResult.courses[c].years.length;
+            if (yCount > maxYears) {
+              maxYears = yCount;
+              best = c;
+            }
+          }
+          activeCourse = best;
+        }
+        renderUI();
+      } catch (e) {
+        analysisResult = analyzeClientSide(allRows);
+        renderUI();
+      }
+    }
+
+    // Render All UI
+    function renderUI() {
+      renderCourseTabs();
+      renderCourseDetails();
+    }
+
+    // Render Tabs
+    function renderCourseTabs() {
+      courseTabs.innerHTML = "";
+      const courses = Object.keys((analysisResult && analysisResult.courses) || {});
+      if (!courses.length) {
+        courseTabs.innerHTML = "<div style='color:var(--muted);font-size:13px;padding:8px'>No courses yet. Add an exam paper to begin!</div>";
+        return;
+      }
+
+      courses.forEach(c => {
+        const data = analysisResult.courses[c];
+        const btn = document.createElement("button");
+        btn.className = `tab-btn ${c === activeCourse ? "active" : ""}`;
+        btn.innerHTML = `
+          <span>Course ${c}</span>
+          <span class="tab-count">${data.years.length} yr${data.years.length > 1 ? "s" : ""}</span>
+        `;
+        btn.addEventListener("click", () => {
+          activeCourse = c;
+          renderUI();
+        });
+        courseTabs.appendChild(btn);
+      });
+    }
+
+    // Render Main Course Dashboard
+    function renderCourseDetails() {
+      if (!activeCourse || !analysisResult || !analysisResult.courses[activeCourse]) {
+        document.getElementById("courseContent").style.display = "none";
+        return;
+      }
+      document.getElementById("courseContent").style.display = "block";
+
+      const cData = analysisResult.courses[activeCourse];
+
+      // KPIs
+      kpiPapers.textContent = cData.paper_count;
+      kpiYears.textContent = cData.years.length;
+      kpiYearsList.textContent = `Cycles: ${cData.years.join(", ")}`;
+      kpiQuestions.textContent = cData.question_count;
+      kpiTopics.textContent = cData.topics.length;
+
+      // Predictions Hero
+      renderPredictions(cData.predictions);
+
+      // Dumbbell Chart
+      renderChart();
+
+      // Topics Table
+      renderTable();
+    }
+
+    // Render Top 5 Predictions Cards
+    function renderPredictions(predictions) {
+      predictionsGrid.innerHTML = "";
+      if (!predictions || !predictions.length) {
+        predictionsGrid.innerHTML = "<div style='color:var(--muted);padding:16px'>No predictions available yet.</div>";
+        return;
+      }
+
+      predictions.forEach(p => {
+        const tInfo = TREND_LABELS[p.trend] || { title: p.trend, desc: "", mult: "1.0x" };
+        const card = document.createElement("div");
+        card.className = "prediction-card";
+
+        let sampleHtml = "";
+        if (p.sample_questions && p.sample_questions.length) {
+          sampleHtml = `
+            <div class="sample-questions-box">
+              <div class="sample-q-label">Ground-Truth Evidence Questions</div>
+              ${p.sample_questions.map(q => `<div class="sample-q-item">“${escapeHtml(q)}”</div>`).join("")}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="prediction-top">
+            <div class="prediction-title-wrap">
+              <div class="prediction-title">${escapeHtml(p.label)}</div>
+            </div>
+            <div class="rank-badge">#${p.rank}</div>
+          </div>
+          <div style="margin-bottom: 8px;">
+            <span class="trend-chip" title="${escapeHtml(tInfo.desc)}">
+              <span>●</span> ${escapeHtml(tInfo.title)} (${tInfo.mult})
+            </span>
+          </div>
+          <div class="prediction-stats">
+            <div>
+              <div class="stat-mini-label">Expected Marks</div>
+              <div class="stat-mini-val tabular">~${p.expected_marks} pts</div>
+            </div>
+            <div>
+              <div class="stat-mini-label">Est. Questions</div>
+              <div class="stat-mini-val tabular">~${p.expected_questions}</div>
+            </div>
+            <div>
+              <div class="stat-mini-label">Priority Score</div>
+              <div class="stat-mini-val tabular" style="color:var(--accent);">${p.score}</div>
+            </div>
+          </div>
+          <div class="prediction-evidence">
+            <span>🔍</span> <span>${escapeHtml(p.evidence)}</span>
+          </div>
+          ${sampleHtml}
+        `;
+        predictionsGrid.appendChild(card);
+      });
+    }
+
+    // Render Dumbbell / Horizontal Bar Chart
+    function renderChart() {
+      if (!activeCourse || !analysisResult) return;
+      const cData = analysisResult.courses[activeCourse];
+      const years = cData.years;
+      const topics = cData.topics.slice(0, 12); // top 12 topics
+
+      chartLegend.innerHTML = "";
+      trendSvg.innerHTML = "";
+
+      if (!topics.length) return;
+
+      const isTwoOrMoreYears = years.length >= 2;
+      const recentYear = String(years[years.length - 1]);
+      const olderYear = isTwoOrMoreYears ? String(years[years.length - 2]) : null;
+
+      // Legend
+      if (isTwoOrMoreYears) {
+        chartLegend.innerHTML = `
+          <div class="legend-item"><span class="legend-dot older"></span> <span>${olderYear} Exam</span></div>
+          <div class="legend-item"><span class="legend-dot recent"></span> <span>${recentYear} Exam (Most Recent)</span></div>
+          <div style="margin-left: auto; font-size: 11px; color: var(--muted);">Click any row to jump to questions</div>
+        `;
+        chartTitle.textContent = `Topic Marks Trajectory: ${olderYear} vs ${recentYear}`;
+      } else {
+        chartLegend.innerHTML = `
+          <div class="legend-item"><span class="legend-dot recent"></span> <span>${recentYear} Exam Marks</span></div>
+        `;
+        chartTitle.textContent = `Topic Marks Distribution (${recentYear})`;
+      }
+
+      // Determine max marks for scale
+      let maxMark = 10;
+      topics.forEach(t => {
+        const m1 = (t.by_year[recentYear] && t.by_year[recentYear].marks) || 0;
+        const m2 = olderYear && t.by_year[olderYear] ? (t.by_year[olderYear].marks || 0) : 0;
+        if (m1 > maxMark) maxMark = m1;
+        if (m2 > maxMark) maxMark = m2;
+      });
+      maxMark = Math.ceil(maxMark / 10) * 10;
+
+      const rowHeight = 32;
+      const totalHeight = Math.max(260, topics.length * rowHeight + 50);
+      trendSvg.setAttribute("height", totalHeight);
+
+      const svgWidth = trendSvg.clientWidth || 800;
+      const leftMargin = 220;
+      const rightMargin = 40;
+      const chartWidth = Math.max(300, svgWidth - leftMargin - rightMargin);
+
+      function getX(markVal) {
+        return leftMargin + (markVal / maxMark) * chartWidth;
+      }
+
+      // Draw vertical gridlines
+      const gridTicks = 5;
+      for (let i = 0; i <= gridTicks; i++) {
+        const markVal = (maxMark / gridTicks) * i;
+        const x = getX(markVal);
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x);
+        line.setAttribute("x2", x);
+        line.setAttribute("y1", 10);
+        line.setAttribute("y2", totalHeight - 30);
+        line.setAttribute("stroke", "var(--border-subtle)");
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "3 3");
+        trendSvg.appendChild(line);
+
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", x);
+        text.setAttribute("y", totalHeight - 12);
+        text.setAttribute("text-anchor", "middle");
+        text.setAttribute("font-size", "11");
+        text.setAttribute("fill", "var(--muted)");
+        text.setAttribute("class", "tabular");
+        text.textContent = markVal + " pts";
+        trendSvg.appendChild(text);
+      }
+
+      // Draw rows
+      topics.forEach((t, idx) => {
+        const y = 30 + idx * rowHeight;
+        const mRecent = (t.by_year[recentYear] && t.by_year[recentYear].marks) || 0;
+        const mOlder = olderYear && t.by_year[olderYear] ? (t.by_year[olderYear].marks || 0) : 0;
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "chart-row");
+        g.dataset.topic = t.topic;
+
+        // Topic Label
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", leftMargin - 14);
+        label.setAttribute("y", y + 4);
+        label.setAttribute("text-anchor", "end");
+        label.setAttribute("font-size", "12");
+        label.setAttribute("font-weight", "500");
+        label.setAttribute("fill", "var(--text)");
+        label.textContent = t.label.length > 26 ? t.label.slice(0, 24) + "…" : t.label;
+        g.appendChild(label);
+
+        const xRecent = getX(mRecent);
+
+        if (isTwoOrMoreYears) {
+          const xOlder = getX(mOlder);
+          // Connector line
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", Math.min(xOlder, xRecent));
+          line.setAttribute("x2", Math.max(xOlder, xRecent));
+          line.setAttribute("y1", y);
+          line.setAttribute("y2", y);
+          line.setAttribute("stroke", "var(--border)");
+          line.setAttribute("stroke-width", "3");
+          line.setAttribute("stroke-linecap", "round");
+          g.appendChild(line);
+
+          // Older dot
+          const cOlder = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          cOlder.setAttribute("cx", xOlder);
+          cOlder.setAttribute("cy", y);
+          cOlder.setAttribute("r", "5.5");
+          cOlder.setAttribute("fill", "var(--older-dot)");
+          g.appendChild(cOlder);
+
+          // Recent dot
+          const cRecent = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          cRecent.setAttribute("cx", xRecent);
+          cRecent.setAttribute("cy", y);
+          cRecent.setAttribute("r", "6.5");
+          cRecent.setAttribute("fill", "var(--recent-dot)");
+          g.appendChild(cRecent);
+        } else {
+          // Horizontal Bar
+          const bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          bar.setAttribute("x", leftMargin);
+          bar.setAttribute("y", y - 6);
+          bar.setAttribute("width", Math.max(2, xRecent - leftMargin));
+          bar.setAttribute("height", "12");
+          bar.setAttribute("rx", "3");
+          bar.setAttribute("fill", "var(--accent)");
+          g.appendChild(bar);
+        }
+
+        // Hover tooltip
+        g.addEventListener("mouseenter", (evt) => {
+          tooltip.style.display = "block";
+          let html = `<strong>${escapeHtml(t.label)}</strong><br>`;
+          if (isTwoOrMoreYears) {
+            html += `${olderYear}: ${mOlder} marks<br>${recentYear}: ${mRecent} marks<br>`;
+          } else {
+            html += `${recentYear}: ${mRecent} marks<br>`;
+          }
+          html += `Trend: <strong>${t.trend}</strong> (Score: ${t.score})`;
+          tooltip.innerHTML = html;
+        });
+
+        g.addEventListener("mousemove", (evt) => {
+          tooltip.style.left = (evt.pageX + 14) + "px";
+          tooltip.style.top = (evt.pageY - 28) + "px";
+        });
+
+        g.addEventListener("mouseleave", () => {
+          tooltip.style.display = "none";
+        });
+
+        // Click to scroll to topic in table
+        g.addEventListener("click", () => {
+          const row = document.getElementById("topic-row-" + t.topic);
+          if (row) {
+            row.scrollIntoView({ behavior: "smooth", block: "center" });
+            toggleTopicDrawer(t.topic, true);
+          }
+        });
+
+        trendSvg.appendChild(g);
+      });
+    }
+
+    // Render Topic Table
+    function renderTable() {
+      if (!activeCourse || !analysisResult) return;
+      const cData = analysisResult.courses[activeCourse];
+      const years = cData.years;
+
+      // Update Head Row
+      tableHeadRow.innerHTML = `
+        <th style="width: 32px;"></th>
+        <th data-sort="label">Topic</th>
+        ${years.map(y => `<th class="tabular" data-sort="year-${y}">${y}</th>`).join("")}
+        <th data-sort="trend">Trend</th>
+        <th class="tabular" data-sort="base">Recency Base</th>
+        <th class="tabular" data-sort="score">Score</th>
+        <th class="tabular" data-sort="count">Questions</th>
+      `;
+
+      filterAndRenderTableBody();
+    }
+
+    function filterAndRenderTableBody() {
+      if (!activeCourse || !analysisResult) return;
+      const cData = analysisResult.courses[activeCourse];
+      const years = cData.years;
+      const qQuery = tableSearch.value.trim().toLowerCase();
+      const tFilter = trendFilter.value;
+
+      tableBody.innerHTML = "";
+
+      const filtered = cData.topics.filter(t => {
+        if (tFilter !== "all" && t.trend !== tFilter) return false;
+        if (!qQuery) return true;
+        if (t.label.toLowerCase().includes(qQuery) || t.topic.toLowerCase().includes(qQuery)) return true;
+        // Search inside question texts
+        return t.questions.some(q => (q.text || "").toLowerCase().includes(qQuery));
+      });
+
+      if (!filtered.length) {
+        tableBody.innerHTML = `<tr><td colspan="${6 + years.length}" style="text-align:center;padding:32px;color:var(--muted);">No matching topics found.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(t => {
+        const row = document.createElement("tr");
+        row.className = "topic-row";
+        row.id = "topic-row-" + t.topic;
+
+        const tInfo = TREND_LABELS[t.trend] || { title: t.trend, mult: "" };
+
+        let yearCells = "";
+        years.forEach(y => {
+          const yrData = t.by_year[String(y)];
+          if (yrData && yrData.count > 0) {
+            const marksDisplay = yrData.marks !== null ? `${yrData.marks} pts` : `(${yrData.count} q)`;
+            yearCells += `<td class="tabular">${marksDisplay}</td>`;
+          } else {
+            yearCells += `<td class="tabular" style="color:var(--muted);">—</td>`;
+          }
+        });
+
+        row.innerHTML = `
+          <td style="text-align: center;"><span class="chevron">▶</span></td>
+          <td><strong>${escapeHtml(t.label)}</strong></td>
+          ${yearCells}
+          <td>
+            <span class="trend-chip" title="${escapeHtml(tInfo.desc || '')}">
+              ${escapeHtml(tInfo.title)}
+            </span>
+          </td>
+          <td class="tabular">${t.base}</td>
+          <td class="tabular" style="font-weight: 700; color: var(--accent);">${t.score}</td>
+          <td class="tabular">${t.questions.length}</td>
+        `;
+
+        row.addEventListener("click", () => toggleTopicDrawer(t.topic));
+        tableBody.appendChild(row);
+
+        // Sub-row for Question Drawer
+        const drawerRow = document.createElement("tr");
+        drawerRow.className = "drawer-row";
+        drawerRow.id = "drawer-row-" + t.topic;
+        drawerRow.style.display = "none";
+
+        let qCards = t.questions.map(q => `
+          <div class="q-item-card">
+            <div class="q-meta">
+              <span>${q.year} ${escapeHtml(q.paper)}</span>
+              <span>Q${escapeHtml(q.q)}</span>
+              ${q.marks !== null ? `<span class="q-marks-pill tabular">${q.marks} pts</span>` : ""}
+            </div>
+            <div class="q-text">“${escapeHtml(q.text || "No question summary")}”</div>
+          </div>
+        `).join("");
+
+        drawerRow.innerHTML = `
+          <td colspan="${6 + years.length}">
+            <div class="drawer-content">
+              <div class="drawer-header">Historical Questions for ${escapeHtml(t.label)} (${t.questions.length} total)</div>
+              <div class="question-list">${qCards}</div>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(drawerRow);
+      });
+    }
+
+    function toggleTopicDrawer(topicId, forceOpen = false) {
+      const row = document.getElementById("topic-row-" + topicId);
+      const drawer = document.getElementById("drawer-row-" + topicId);
+      if (!row || !drawer) return;
+
+      const isExpanded = row.classList.contains("expanded");
+      if (isExpanded && !forceOpen) {
+        row.classList.remove("expanded");
+        drawer.style.display = "none";
+      } else {
+        row.classList.add("expanded");
+        drawer.style.display = "table-row";
+      }
+    }
+
+    tableSearch.addEventListener("input", filterAndRenderTableBody);
+    trendFilter.addEventListener("change", filterAndRenderTableBody);
+
+    // Ingestion Modal Management
+    openUploadBtn.addEventListener("click", () => {
+      // Populate courses in dropdown
+      paperCourseSelect.innerHTML = "";
+      const courses = Object.keys((analysisResult && analysisResult.courses) || {});
+      courses.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = `Course ${c}`;
+        if (c === activeCourse) opt.selected = true;
+        paperCourseSelect.appendChild(opt);
+      });
+      const newOpt = document.createElement("option");
+      newOpt.value = "__new__";
+      newOpt.textContent = "+ New Course...";
+      paperCourseSelect.appendChild(newOpt);
+
+      newCourseInput.style.display = paperCourseSelect.value === "__new__" ? "block" : "none";
+      extractionPreviewSection.style.display = "none";
+      extractedRowsPreview = [];
+      pendingImages = [];
+      fileUploadStatus.textContent = "";
+
+      uploadModal.classList.add("open");
+    });
+
+    closeUploadModal.addEventListener("click", () => uploadModal.classList.remove("open"));
+
+    paperCourseSelect.addEventListener("change", () => {
+      newCourseInput.style.display = paperCourseSelect.value === "__new__" ? "block" : "none";
+    });
+
+    // File Drop & Upload
+    fileDropzone.addEventListener("click", () => fileInput.click());
+    fileDropzone.addEventListener("dragover", (e) => { e.preventDefault(); fileDropzone.classList.add("dragover"); });
+    fileDropzone.addEventListener("dragleave", () => fileDropzone.classList.remove("dragover"));
+    fileDropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      fileDropzone.classList.remove("dragover");
+      if (e.dataTransfer.files.length) {
+        handleFileSelected(e.dataTransfer.files[0]);
+      }
+    });
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length) handleFileSelected(fileInput.files[0]);
+    });
+
+    async function handleFileSelected(file) {
+      fileUploadStatus.textContent = `Reading file: ${file.name}...`;
+      const fname = file.name.toLowerCase();
+
+      if (fname.endsWith(".txt")) {
+        const txt = await file.text();
+        paperText.value = txt;
+        fileUploadStatus.textContent = `Loaded ${file.name} (${txt.length} characters)`;
+      } else if (fname.endsWith(".pdf") || fname.endsWith(".docx") || fname.endsWith(".doc")) {
+        try {
+          fileUploadStatus.textContent = `Extracting document text...`;
+          const res = await fetch("/pdftotext", {
+            method: "POST",
+            body: file
+          });
+          if (res.ok) {
+            const data = await res.json();
+            paperText.value = data.text;
+            fileUploadStatus.textContent = `Successfully extracted ${data.text.length} characters from ${file.name}!`;
+          } else {
+            const data = await res.json().catch(() => ({}));
+            fileUploadStatus.textContent = data.error || "Could not extract text. Please copy-paste questions below.";
+          }
+        } catch (e) {
+          fileUploadStatus.textContent = "Server extraction unavailable. Please paste exam text directly below.";
+        }
+      } else {
+        fileUploadStatus.textContent = "Supported formats: .pdf, .docx, .doc, .txt";
+      }
+    }
+
+    // Sample exam text button
+    loadSampleTextBtn.addEventListener("click", () => {
+      paperText.value = `Problem 1 (20 points):
+Evaluate the following integrals:
+(a) ∫ x^2 e^(3x) dx using integration by parts.
+(b) ∫ sin^3(x) cos^2(x) dx using trigonometric substitution.
+
+Problem 2 (15 points):
+Find dy/dx using implicit differentiation for the curve:
+x^3 + y^3 - 9xy = 0 at the point (2, 4).
+
+Problem 3 (20 points):
+A rectangular storage container with an open top is to have a volume of 10 m^3.
+The length of its base is twice the width. Material for the base costs $10 per square meter,
+and material for the sides costs $6 per square meter. Find the cost of materials for the cheapest container.
+
+Problem 4 (25 points):
+Find the volume of the solid generated by revolving the region bounded by y = sqrt(x), y = 0, and x = 4 about the y-axis.
+
+Problem 5 (20 points):
+Find the Taylor series for f(x) = ln(1 + x) centered at x = 0, and determine its radius of convergence.`;
+      showToast("Loaded sample 5-problem calculus exam");
+    });
+
+    // Extract Questions via LLM
+    extractQuestionsBtn.addEventListener("click", async () => {
+      const text = paperText.value.trim();
+      if (!text && !pendingImages.length) {
+        showToast("Please provide exam text or attach an image first!");
+        return;
+      }
+
+      let course = paperCourseSelect.value === "__new__" ? newCourseInput.value.trim() : paperCourseSelect.value;
+      course = course.replace(/[^a-zA-Z0-9.-]/g, "-").toLowerCase();
+      if (!course) {
+        showToast("Please enter a valid course ID!");
+        return;
+      }
+
+      const year = parseInt(paperYear.value) || 2007;
+      const paper = paperName.value.trim() || "exam";
+
+      // Get existing topics for course to ensure consistent labeling
+      let existingTopics = [];
+      if (analysisResult && analysisResult.courses[course]) {
+        existingTopics = analysisResult.courses[course].topics.map(t => t.topic);
+      }
+
+      const settings = getSettings();
+      const payload = {
+        text: text,
+        
+        course: course,
+        year: year,
+        paper: paper,
+        existing_topics: existingTopics,
+        provider: settings.provider,
+        base_url: settings.base_url,
+        model: settings.model,
+        api_key: settings.api_key
+      };
+
+      extractQuestionsBtn.disabled = true;
+      extractQuestionsBtn.innerHTML = `<span>⏳ Extracting questions with AI...</span>`;
+
+      try {
+        const res = await fetch("/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Extraction failed");
+        }
+        extractedRowsPreview = data.rows || [];
+        showToast(`Successfully extracted ${extractedRowsPreview.length} questions!`);
+        renderExtractionPreview(existingTopics);
+      } catch (e) {
+        alert("Extraction Error:\n" + e.message);
+      } finally {
+        extractQuestionsBtn.disabled = false;
+        extractQuestionsBtn.innerHTML = `<span>Extract Questions via AI</span>`;
+      }
+    });
+
+    // Render Preview Table
+    function renderExtractionPreview(existingTopics) {
+      previewTableBody.innerHTML = "";
+      previewCount.textContent = extractedRowsPreview.length;
+      extractionPreviewSection.style.display = "block";
+
+      extractedRowsPreview.forEach((r, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><input type="text" class="form-input" style="padding:4px 6px;width:50px" value="${escapeHtml(r.q)}" onchange="updatePreviewRow(${idx}, 'q', this.value)"></td>
+          <td>
+            <input type="text" class="form-input" style="padding:4px 6px;width:160px" value="${escapeHtml(r.topic)}" onchange="updatePreviewRow(${idx}, 'topic', this.value)">
+          </td>
+          <td><input type="number" class="form-input" style="padding:4px 6px;width:60px" value="${r.marks !== null ? r.marks : ''}" placeholder="null" onchange="updatePreviewRow(${idx}, 'marks', this.value)"></td>
+          <td><input type="text" class="form-input" style="padding:4px 6px;width:100%" value="${escapeHtml(r.text)}" onchange="updatePreviewRow(${idx}, 'text', this.value)"></td>
+        `;
+        previewTableBody.appendChild(tr);
+      });
+    }
+
+    window.updatePreviewRow = function(idx, field, val) {
+      if (field === "marks") {
+        extractedRowsPreview[idx][field] = val.trim() === "" ? null : parseFloat(val);
+      } else {
+        extractedRowsPreview[idx][field] = val.trim();
+      }
+    };
+
+    // Confirm & Add to Dataset
+    confirmAddRowsBtn.addEventListener("click", async () => {
+      if (!extractedRowsPreview.length) return;
+      allRows.push(...extractedRowsPreview);
+      localStorage.setItem("examoracle-rows", JSON.stringify(allRows));
+
+      // Switch active course to the one just added
+      activeCourse = extractedRowsPreview[0].course;
+
+      uploadModal.classList.remove("open");
+      showToast(`Added ${extractedRowsPreview.length} questions to ${activeCourse}!`);
+      await runAnalysis();
+    });
+
+    // Helper: HTML escape
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Window resize chart re-render
+    window.addEventListener("resize", () => {
+      if (activeCourse) renderChart();
+    });
+
+    // Start App
+    initData();
+  </script>
+</body>
+</html>

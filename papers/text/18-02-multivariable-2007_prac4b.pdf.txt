@@ -1,0 +1,58 @@
+MIT OpenCourseWare
+http://ocw.mit.edu
+
+
+
+
+18.02 Multivariable Calculus
+Fall 2007
+
+
+
+For information about citing these materials or our Terms of Use, visit: http://ocw.mit.edu/terms.
+                                         18.02 Practice Exam 4 8
+
+   Problem 1. (10 poir~ts)
+                                                     +
+   Let C 1)e the portion of the cylinder z2 y2 2 1 lying in the f i ~ octant   t       (:L 2 0, y 2 0, z 2 0)
+   and 1)elow t,he plane z = 1. Set 1111a triple integral in cglCri,i.rlr(ctr.lcoo~r.rlCri,i.ates
+                                                                                               which gives the
+   monierlt of inertia of C a1)olit the z-axis; assnine the density t o 1)e 15 = 1.
+     (Give integrancl and limits of integration, l ~ l i tdo not ~ln1,i~ate.)
+   Problem 2. (20 poir~ts:5; 5, 10)
+    a ) A solid sphere S of radins a is place(1 a1)ove the :cy-plane so it is tangent, a t the origin and
+                                                                    coor.(iinntrs.
+its diameter lies along the z-axis. Give its eqiiation in sl~he~ical:
+   1)) Give the equation of the horizontal plane z = n in spherical coordinates.
+      c) Set 111) a triple integral in spherical coordinates w h i d ~gives the vohinie of the portion of
+the sphere S lying abolie the plane z = a . (Give integrami and limits of integr;ltion, 1)iit (lo not
+ellfr.17L~Lte.)
+   Problem 3. (20 poir~ts:5; 15)
+        +
+   Let F = (2:rg   + z" ? +       ((z"   tyz)j   + (y2 + 32z2 - 1)i(.
+                    +
+   a ) Show that F is conservative.
+                                                                                             +      +
+   1)) Using a systematic metho(1, find a potential fin~ctionf (:L,y; z) slicl~that F = V f . Show
+your work, even if you can (lo it mentally.
+   Problem 4. (25 poir~ts:15; 10)
+    Let S 1)e the snrface formed by the part of the 11araboloicl z = 1 - '2            - y2 lying a1)ove the
+                   +
+                              + +
+.cy-plane and let F = :r.i y j 2(1 - z) k.
+                              +
+   Calc~ilatet,he flux of F across S, taking the iipwar(1 direction as the one for which the flux is
+positive. Do this in two ways:
+   a ) by direct calc~ilationof JJs @ .?I riS;
+                                         +
+   1)) by compihing the flilx of F across a simpler surface and using the divergence theorem.
+   Problem 5. (25 poir~ts:10; 8, 7)
+        +
+   Let F = -2:czi       + y2 k.
+   a ) Calciilate curl @.
+                                  +
+   1)) Show that JJ, curl F . fi~iS= 0 for any finite portion R of the unit sphere :c2           + y2 + z2 = 1.
+(take the normal vector fi pointing olitwar(1).
+                         +
+   c) Show that fC F . riF= 0 for any simple closed curve C on the unit sphere 2'             + y2 + z2 = 1.
+
