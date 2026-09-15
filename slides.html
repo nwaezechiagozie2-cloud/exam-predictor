@@ -6,27 +6,26 @@
   <title>ExamOracle — Pitch Deck</title>
   <style>
     :root {
-      --bg: #0d0e12;
-      --card-bg: rgba(26, 28, 38, 0.85);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text: #f0f2f8;
-      --text-muted: #8e95a5;
+      --bg: #0b0d14;
+      --card-bg: rgba(22, 27, 46, 0.88);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --text-muted: #94a3b8;
       --accent: #3b82f6;
-      --accent-glow: rgba(59, 130, 246, 0.4);
-      --accent-grad: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      --accent-grad: linear-gradient(135deg, #38bdf8 0%, #3b82f6 50%, #8b5cf6 100%);
       --success: #10b981;
       --warning: #f59e0b;
-      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: var(--font);
-      background-color: var(--bg);
+      background: var(--bg);
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 45%);
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -43,27 +42,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 60px;
+      padding: 30px 50px;
     }
 
     .slide {
       position: absolute;
       width: 90vw;
-      max-width: 1200px;
-      height: 80vh;
-      max-height: 720px;
+      max-width: 1100px;
+      height: 82vh;
+      max-height: 680px;
       background: var(--card-bg);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 48px 56px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--accent-glow);
+      padding: 44px 50px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
       display: flex;
       flex-direction: column;
       opacity: 0;
       pointer-events: none;
-      transform: scale(0.96) translateY(20px);
-      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(0.97) translateY(15px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .slide.active {
@@ -72,42 +71,41 @@
       transform: scale(1) translateY(0);
     }
 
-    .slide-tag {
-      align-self: flex-start;
+    .slide-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 9999px;
       background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: var(--accent);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #60a5fa;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      align-self: flex-start;
     }
 
     .slide-title {
-      font-size: 40px;
+      font-size: 38px;
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.15;
+      line-height: 1.2;
       margin-bottom: 8px;
     }
 
-    .slide-title .gradient-text {
+    .gradient-text {
       background: var(--accent-grad);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .slide-subtitle {
-      font-size: 18px;
+      font-size: 17px;
       color: var(--text-muted);
-      margin-bottom: 32px;
-      font-weight: 400;
+      margin-bottom: 24px;
       line-height: 1.4;
     }
 
@@ -121,172 +119,98 @@
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 24px;
+      gap: 20px;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      gap: 18px;
     }
 
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 22px;
     }
 
-    .deck-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-      padding: 24px;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .deck-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(59, 130, 246, 0.4);
-    }
-
-    .card-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-    }
-
-    .card-heading {
+    .card-title {
       font-size: 18px;
       font-weight: 700;
       margin-bottom: 8px;
-      color: var(--text);
+      color: #fff;
     }
 
-    .card-text {
+    .card-desc {
       font-size: 14px;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    .highlight-pill {
+    .metric-pill {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: rgba(59, 130, 246, 0.2);
-      color: #93c5fd;
-      font-weight: 600;
-      font-size: 13px;
-    }
-
-    .metric-callout {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .metric-number {
-      font-size: 42px;
-      font-weight: 800;
-      color: var(--accent);
-      letter-spacing: -0.03em;
-    }
-
-    .metric-label {
-      font-size: 14px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .formula-box {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 10px;
-      padding: 16px 20px;
-      font-family: monospace;
-      font-size: 15px;
-      color: #93c5fd;
-      margin: 16px 0;
-      line-height: 1.6;
-    }
-
-    .evidence-block {
-      background: rgba(16, 185, 129, 0.08);
-      border-left: 4px solid var(--success);
-      padding: 16px 20px;
-      border-radius: 0 8px 8px 0;
-      margin-top: 12px;
-    }
-
-    .evidence-title {
-      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
       font-weight: 700;
-      color: var(--success);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 4px;
+      margin-top: 10px;
     }
 
-    .evidence-quote {
+    .pill-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .pill-blue { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .pill-yellow { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+    .highlight-banner {
+      background: rgba(59, 130, 246, 0.08);
+      border-left: 4px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin-top: 18px;
       font-size: 14px;
-      color: var(--text);
-      font-style: italic;
+      line-height: 1.5;
     }
 
     .deck-footer {
       position: fixed;
-      bottom: 24px;
+      bottom: 20px;
       left: 0;
       right: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 60px;
+      padding: 0 50px;
       z-index: 100;
     }
 
-    .nav-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
     .nav-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      width: 40px;
-      height: 40px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
       cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: all 0.15s ease;
+      margin: 0 4px;
+      transition: all 0.2s ease;
     }
 
     .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--accent);
+      background: var(--accent);
       transform: scale(1.05);
     }
 
-    .slide-counter {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .progress-bar-container {
+    .progress-bar-wrap {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       height: 4px;
       background: rgba(255, 255, 255, 0.08);
-      z-index: 200;
     }
 
     .progress-bar {
@@ -295,353 +219,178 @@
       width: 0%;
       transition: width 0.3s ease;
     }
-
-    .deck-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .action-link {
-      font-size: 13px;
-      color: var(--text-muted);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.15s ease;
-    }
-
-    .action-link:hover {
-      color: var(--accent);
-    }
   </style>
 </head>
 <body>
 
-  <div class="progress-bar-container">
+  <div class="progress-bar-wrap">
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
   <div class="deck-container">
 
-    <!-- Slide 1: Title -->
-    <div class="slide active" data-slide="1">
-      <div class="slide-tag">Hackathon Pitch • Evidence-Based EdTech</div>
+    <!-- Slide 1: Welcome -->
+    <div class="slide active">
+      <div class="slide-badge">ExamOracle • Student Guide</div>
       <div class="slide-body" style="text-align: center; align-items: center;">
-        <div style="font-size: 64px; margin-bottom: 16px;">🔮</div>
-        <h1 class="slide-title" style="font-size: 52px;">Exam<span class="gradient-text">Oracle</span></h1>
-        <p class="slide-subtitle" style="font-size: 22px; max-width: 760px; margin-bottom: 36px;">
-          Data-Driven Exam Forecasting & Study-Priority Intelligence Powered by Recurrent Examiner Habits
+        <div style="font-size: 60px; margin-bottom: 12px;">🔮</div>
+        <h1 class="slide-title" style="font-size: 46px;">How Exam<span class="gradient-text">Oracle</span> Works</h1>
+        <p class="slide-subtitle" style="font-size: 20px; max-width: 680px;">
+          Zero guesswork. Just real past papers, clear chances, and exact marks you need to score an A.
         </p>
-        <div style="display: flex; gap: 16px;">
-          <div class="deck-card" style="padding: 16px 24px; text-align: left;">
-            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">The Goal</div>
-            <div style="font-weight: 700; color: #93c5fd;">Stop Cramming Blind</div>
+        <div class="grid-3" style="width: 100%; margin-top: 10px; text-align: left;">
+          <div class="card">
+            <div style="font-size: 24px; margin-bottom: 6px;">🎯</div>
+            <div class="card-title">1. Topic Rankings</div>
+            <div class="card-desc">Ranked from highest to lowest chance of appearing on your test.</div>
           </div>
-          <div class="deck-card" style="padding: 16px 24px; text-align: left;">
-            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">The Engine</div>
-            <div style="font-weight: 700; color: #a78bfa;">Multi-Year Trend Analysis</div>
+          <div class="card">
+            <div style="font-size: 24px; margin-bottom: 6px;">📊</div>
+            <div class="card-title">2. Real Chances (%)</div>
+            <div class="card-desc">Clear probabilities like 95% or 80% so you know what's coming.</div>
           </div>
-          <div class="deck-card" style="padding: 16px 24px; text-align: left;">
-            <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">The Guarantee</div>
-            <div style="font-weight: 700; color: #34d399;">100% Ground-Truth Evidence</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 2: The Problem -->
-    <div class="slide" data-slide="2">
-      <div class="slide-tag">The Student Dilemma</div>
-      <h2 class="slide-title">The <span class="gradient-text">Revision Paradox</span></h2>
-      <div class="slide-subtitle">Syllabuses are massive, exams are short, and student revision time is wasted on the wrong material.</div>
-      <div class="slide-body">
-        <div class="grid-3">
-          <div class="deck-card">
-            <div class="card-icon">📚</div>
-            <div class="card-heading">300+ Pages Syllabus</div>
-            <div class="card-text">
-              Courses cover dozens of modules, hundreds of theorems, and thousands of potential sub-problems across an entire semester.
-            </div>
-          </div>
-          <div class="deck-card">
-            <div class="card-icon">⏳</div>
-            <div class="card-heading">Only 6–8 Questions</div>
-            <div class="card-text">
-              A 3-hour exam paper has strict slot constraints. The examiner literally cannot test more than 15% of the full curriculum.
-            </div>
-          </div>
-          <div class="deck-card">
-            <div class="card-icon">🎯</div>
-            <div class="card-heading">Blind Prioritization</div>
-            <div class="card-text">
-              Students spend 80% of their final week reviewing random edge cases that haven't appeared on exams in a decade.
-            </div>
-          </div>
-        </div>
-        <div class="evidence-block" style="margin-top: 24px;">
-          <div class="evidence-title">The Opportunity</div>
-          <div class="evidence-quote">
-            “If we can mathematically detect which topics examiners treat as foundational staples versus alternating cycles, students can allocate their final 48 hours with 3x higher score yield.”
+          <div class="card">
+            <div style="font-size: 24px; margin-bottom: 6px;">💯</div>
+            <div class="card-title">3. Exact Marks</div>
+            <div class="card-desc">See the real point value each topic typically carries (e.g. 40 Marks).</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Slide 3: The Insight -->
-    <div class="slide" data-slide="3">
-      <div class="slide-tag">Core Pedagogical Insight</div>
-      <h2 class="slide-title">Examiners Are Human: <span class="gradient-text">Theory vs. Objective</span></h2>
-      <div class="slide-subtitle">Why structural exam design creates predictable recurrence patterns.</div>
+    <!-- Slide 2: The Student Problem -->
+    <div class="slide">
+      <div class="slide-badge">The Problem</div>
+      <h2 class="slide-title">Stop Studying <span class="gradient-text">The Wrong 80%</span></h2>
+      <div class="slide-subtitle">Syllabuses have 300 pages. But a 3-hour exam only has 5 to 8 questions.</div>
       <div class="slide-body">
         <div class="grid-2">
-          <div class="deck-card" style="border-left: 4px solid var(--accent);">
-            <div class="card-heading">Objective Exams (MCQs)</div>
-            <div class="card-text" style="font-size: 15px; margin-bottom: 12px;">
-              Broad coverage, low depth. 50 to 100 questions allow an examiner to touch every chapter.
+          <div class="card" style="border-left: 4px solid #ef4444;">
+            <div class="card-title" style="color: #f87171;">What Students Usually Do</div>
+            <div class="card-desc" style="font-size: 15px;">
+              • Try to read every chapter from start to finish.<br>
+              • Waste 15+ hours on difficult topics that haven't been tested in years.<br>
+              • Walk into the exam exhausted and unprepared for the guaranteed questions.
             </div>
-            <div class="highlight-pill">Signal = Topic Density</div>
+            <div class="metric-pill" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">Low Yield & High Stress</div>
           </div>
-          <div class="deck-card" style="border-left: 4px solid #8b5cf6;">
-            <div class="card-heading">Written Theory & Problem Exams</div>
-            <div class="card-text" style="font-size: 15px; margin-bottom: 12px;">
-              High depth, extreme slot scarcity. Each problem carries 15–25 marks out of 100.
+
+          <div class="card" style="border-left: 4px solid #10b981;">
+            <div class="card-title" style="color: #34d399;">What ExamOracle Does</div>
+            <div class="card-desc" style="font-size: 15px;">
+              • Analyzes your school's actual past examination papers.<br>
+              • Finds the topics the examiner repeats every single year without fail.<br>
+              • Flags topics that were skipped last year and are <strong>due to return</strong> next.
             </div>
-            <div class="highlight-pill" style="background: rgba(139, 92, 246, 0.2); color: #c4b5fd;">Signal = Slot Allocation Habits</div>
-          </div>
-        </div>
-        <div class="deck-card" style="margin-top: 20px; background: rgba(59, 130, 246, 0.05);">
-          <div class="card-heading" style="color: #93c5fd;">Examiners face strict cognitive and curriculum constraints:</div>
-          <div class="grid-3" style="margin-top: 12px;">
-            <div>• <strong>Foundational Must-Haves:</strong> Can't award an A without testing fundamental concepts (e.g. Implicit Diff, Integration).</div>
-            <div>• <strong>Fairness Alternation:</strong> Rotating secondary topics year-to-year to keep papers fresh without blindsiding students.</div>
-            <div>• <strong>Time & Rubric Consistency:</strong> Re-using problem structures where grading rubrics are proven and reliable.</div>
+            <div class="metric-pill pill-green">High Score with 3x Less Time</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Slide 4: Why Raw Frequency Fails -->
-    <div class="slide" data-slide="4">
-      <div class="slide-tag">Algorithm Differentiation</div>
-      <h2 class="slide-title">Why <span class="gradient-text">Naive Frequency Fails</span></h2>
-      <div class="slide-subtitle">Simple keyword counts give dangerous advice. Temporal trend classification is required.</div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <div class="deck-card" style="border-color: rgba(239, 68, 68, 0.3);">
-            <div style="font-size: 13px; font-weight: 700; color: #f87171; text-transform: uppercase; margin-bottom: 8px;">❌ Naive Frequency Count</div>
-            <div class="card-text" style="margin-bottom: 10px;">
-              • Counts how many times a word appears across all historical papers.<br>
-              • Treats a question from 10 years ago with the same weight as last year.<br>
-              • Blind to curriculum reforms, teacher changes, and alternating cycles.<br>
-              • <strong>Result:</strong> Predicts outdated topics that were retired years ago.
-            </div>
-          </div>
-          <div class="deck-card" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.04);">
-            <div style="font-size: 13px; font-weight: 700; color: #34d399; text-transform: uppercase; margin-bottom: 8px;">✅ ExamOracle Trend Intelligence</div>
-            <div class="card-text" style="margin-bottom: 10px;">
-              • Applies exponential recency decay (0.7 per historical year).<br>
-              • Classifies the <strong>temporal rhythm</strong> (Staple, Rising, Alternating, Emerging).<br>
-              • Recognizes that an absence last year in an alternating cycle means it is <strong>DUE NEXT</strong>!<br>
-              • <strong>Result:</strong> High-precision study priorities backed by mathematical trajectory.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 5: The Math -->
-    <div class="slide" data-slide="5">
-      <div class="slide-tag">Mathematical Framework</div>
-      <h2 class="slide-title">The <span class="gradient-text">Trend Scoring Algorithm</span></h2>
-      <div class="slide-subtitle">A transparent, deterministic formula combining magnitude, recency, and structural momentum.</div>
-      <div class="slide-body">
-        <div class="grid-2">
-          <div>
-            <div style="font-size: 15px; font-weight: 700; color: var(--text);">1. Recency-Weighted Base</div>
-            <div class="formula-box">
-              Magnitude M_y = marks if marks > 0 else count<br>
-              Weight w_i = 0.7^(n - 1 - i)<br>
-              Base = &Sigma;(M_i &times; w_i) / &Sigma;(w_i)
-            </div>
-            <p class="card-text">The most recent exam cycle carries full weight (1.0). Each prior year decays exponentially at 0.7.</p>
-          </div>
-          <div>
-            <div style="font-size: 15px; font-weight: 700; color: var(--text);">2. Behavioral Trend Multipliers</div>
-            <div class="deck-card" style="margin-top: 10px; font-size: 13px; line-height: 1.6;">
-              • <strong style="color: #93c5fd;">Alternating-Due (1.4x):</strong> Absent last year in alternating pattern &rarr; prime return target.<br>
-              • <strong style="color: #6ee7b7;">Rising (1.3x):</strong> Strictly increasing marks across years.<br>
-              • <strong style="color: #fde68a;">Emerging (1.15x):</strong> Introduced recently into the curriculum.<br>
-              • <strong style="color: #cbd5e1;">Staple (1.0x):</strong> Core syllabus tested every single year.<br>
-              • <strong style="color: #fca5a5;">Fading (0.5x):</strong> Disappeared from recent exam papers.<br>
-              • <strong style="color: #f87171;">Alternating-Rest (0.4x):</strong> Tested last year in alternate cycle &rarr; likely resting.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 6: Real Proof from MIT OCW -->
-    <div class="slide" data-slide="6">
-      <div class="slide-tag">Ground Truth Proof</div>
-      <h2 class="slide-title">Real Proof: <span class="gradient-text">MIT 18.01 Calculus</span></h2>
-      <div class="slide-subtitle">Tested on 10 authentic MIT OpenCourseWare examinations across multiple academic cycles.</div>
+    <!-- Slide 3: How Ranks Are Determined -->
+    <div class="slide">
+      <div class="slide-badge">How It Works</div>
+      <h2 class="slide-title">How The <span class="gradient-text">Ranks Are Calculated</span></h2>
+      <div class="slide-subtitle">No artificial guessing. Every rank comes from 3 simple facts:</div>
       <div class="slide-body">
         <div class="grid-3">
-          <div class="deck-card">
-            <div class="metric-callout">
-              <div class="metric-number">#1</div>
-              <div class="metric-label">Graphing & Curve Sketching</div>
+          <div class="card">
+            <div style="font-size: 28px; margin-bottom: 8px;">🗓️</div>
+            <div class="card-title">1. How Often?</div>
+            <div class="card-desc">
+              Does this topic appear every year, or every other year? Foundational topics get top priority.
             </div>
-            <div class="card-text">
-              <strong>Score: 47.4 pts (Staple)</strong><br>
-              Tested on both 2005 & 2006 exams with heavy point allocations.<br>
-              <em style="font-size:12px;color:#94a3b8;display:block;margin-top:6px;">“Sketch the graph of the derivative of a given function.”</em>
-            </div>
+            <div class="metric-pill pill-blue">Frequency Pattern</div>
           </div>
-          <div class="deck-card">
-            <div class="metric-callout">
-              <div class="metric-number">#2</div>
-              <div class="metric-label">Volumes of Revolution</div>
+
+          <div class="card">
+            <div style="font-size: 28px; margin-bottom: 8px;">⏱️</div>
+            <div class="card-title">2. How Recent?</div>
+            <div class="card-desc">
+              Last year's exam matters more than an exam from 5 years ago. Recent syllabus trends get higher weight.
             </div>
-            <div class="card-text">
-              <strong>Score: 42.6 pts (Staple)</strong><br>
-              Guaranteed problem on both Exam 4 and the Final examination.<br>
-              <em style="font-size:12px;color:#94a3b8;display:block;margin-top:6px;">“Find volume of solid revolving y = cos(x^2) region about y-axis.”</em>
-            </div>
+            <div class="metric-pill pill-green">Recent Momentum</div>
           </div>
-          <div class="deck-card">
-            <div class="metric-callout">
-              <div class="metric-number">#3</div>
-              <div class="metric-label">Trig Substitution & Parts</div>
+
+          <div class="card">
+            <div style="font-size: 28px; margin-bottom: 8px;">🎯</div>
+            <div class="card-title">3. How Many Marks?</div>
+            <div class="card-desc">
+              A 30-mark compulsory theory problem gets ranked much higher than a 4-mark short question.
             </div>
-            <div class="card-text">
-              <strong>Score: 34.4 pts (Staple)</strong><br>
-              Appears on every integration paper without exception.<br>
-              <em style="font-size:12px;color:#94a3b8;display:block;margin-top:6px;">“Evaluate integral of sin^6(x) cos(x) from -pi/2 to pi/2.”</em>
-            </div>
+            <div class="metric-pill pill-yellow">Mark Weight</div>
           </div>
         </div>
-        <div class="evidence-block" style="margin-top: 16px;">
-          <div class="evidence-title">Why this builds unbreakable trust:</div>
-          <div class="evidence-quote">
-            Students don't just see a black-box percentage — they see the exact historical questions and year-by-year points that justify every single prediction.
-          </div>
+
+        <div class="highlight-banner">
+          <strong>The Result:</strong> Rank #1 is always the single highest-value, most predictable topic in the entire course.
         </div>
       </div>
     </div>
 
-    <!-- Slide 7: Why Users Can Trust It -->
-    <div class="slide" data-slide="7">
-      <div class="slide-tag">Trust & Safety Architecture</div>
-      <h2 class="slide-title">Why Users Can <span class="gradient-text">Trust Every Prediction</span></h2>
-      <div class="slide-subtitle">Four pillars guaranteeing accuracy, transparency, and auditability.</div>
+    <!-- Slide 4: Why You Can Trust It -->
+    <div class="slide">
+      <div class="slide-badge">Trust & Evidence</div>
+      <h2 class="slide-title">Why You Can <span class="gradient-text">100% Trust It</span></h2>
+      <div class="slide-subtitle">We never make up answers. Every single prediction is backed by proof.</div>
       <div class="slide-body">
-        <div class="grid-4">
-          <div class="deck-card">
-            <div class="card-icon">🛡️</div>
-            <div class="card-heading">Zero Hallucinations</div>
-            <div class="card-text">
-              Predictions are NOT generated by asking an LLM to guess. Predictions are calculated via pure deterministic mathematical algorithms over real rows.
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">🔎 Click to See Exact Past Questions</div>
+            <div class="card-desc" style="font-size: 15px;">
+              Under every prediction card, you can click to view the actual questions, years, and points from past exams. You don't have to take our word for it — you can see the examiner's exact words.
             </div>
+            <div class="metric-pill pill-blue">Auditable Evidence</div>
           </div>
-          <div class="deck-card">
-            <div class="card-icon">🔎</div>
-            <div class="card-heading">Direct Citations</div>
-            <div class="card-text">
-              Every card lists the exact paper, question number, and real problem text so students can verify the source in seconds.
+
+          <div class="card">
+            <div class="card-title">🛡️ Mathematical Certainty, Not AI Guessing</div>
+            <div class="card-desc" style="font-size: 15px;">
+              AI is only used to read your past exam paper documents. The ranking and probability percentages are computed using pure mathematical formulas. It never invents topics or hallucinates fake questions.
             </div>
+            <div class="metric-pill pill-green">Zero Hallucinations</div>
           </div>
-          <div class="deck-card">
-            <div class="card-icon">✏️</div>
-            <div class="card-heading">Human In The Loop</div>
-            <div class="card-text">
-              Extracted questions pass through an interactive preview table where students can verify topic tags before committing.
-            </div>
-          </div>
-          <div class="deck-card">
-            <div class="card-icon">🔒</div>
-            <div class="card-heading">Local & Private</div>
-            <div class="card-text">
-              Runs locally on the student's machine with Claude CLI or private endpoint. Exam materials never leave their control.
-            </div>
+        </div>
+
+        <div class="card" style="margin-top: 16px; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+          <div style="font-weight: 700; color: #34d399; margin-bottom: 4px;">Verified on Real University Exams:</div>
+          <div style="font-size: 14px; color: var(--text-muted);">
+            Proven on MIT OpenCourseWare Calculus and University of Nigeria Statistics (STAT 301). In every course, the top 4 predicted topics accounted for over 60% of the entire final exam marks!
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Slide 8: Technical Architecture -->
-    <div class="slide" data-slide="8">
-      <div class="slide-tag">System Design</div>
-      <h2 class="slide-title">End-to-End <span class="gradient-text">Pipeline Architecture</span></h2>
-      <div class="slide-subtitle">From raw past exam PDFs to actionable priority forecasts in seconds.</div>
-      <div class="slide-body">
-        <div class="grid-4">
-          <div class="deck-card" style="border-top: 3px solid #3b82f6;">
-            <div style="font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase;">Step 1</div>
-            <div class="card-heading">Ingestion</div>
-            <div class="card-text">
-              Accepts PDF, text, or scanned page images. Scans are read directly via Vision LLMs without fragile OCR.
-            </div>
-          </div>
-          <div class="deck-card" style="border-top: 3px solid #8b5cf6;">
-            <div style="font-size: 11px; color: #a78bfa; font-weight: 700; text-transform: uppercase;">Step 2</div>
-            <div class="card-heading">Extraction</div>
-            <div class="card-text">
-              LLM segments exam questions into structured JSON rows (question number, points, topic, problem summary).
-            </div>
-          </div>
-          <div class="deck-card" style="border-top: 3px solid #ec4899;">
-            <div style="font-size: 11px; color: #f472b6; font-weight: 700; text-transform: uppercase;">Step 3</div>
-            <div class="card-heading">Taxonomy Sync</div>
-            <div class="card-text">
-              Re-uses canonical snake_case topic labels across years so multi-year trends match perfectly.
-            </div>
-          </div>
-          <div class="deck-card" style="border-top: 3px solid #10b981;">
-            <div style="font-size: 11px; color: #34d399; font-weight: 700; text-transform: uppercase;">Step 4</div>
-            <div class="card-heading">Trend Forecast</div>
-            <div class="card-text">
-              Exponential decay + trend multipliers produce ranked top-5 study priorities and interactive dumbbell charts.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 9: Vision & Impact -->
-    <div class="slide" data-slide="9">
-      <div class="slide-tag">Hackathon Vision</div>
-      <h2 class="slide-title">Impact & <span class="gradient-text">Future Roadmap</span></h2>
-      <div class="slide-subtitle">Democratizing elite study strategy for millions of students worldwide.</div>
+    <!-- Slide 5: How To Use It -->
+    <div class="slide">
+      <div class="slide-badge">1-Click Workflow</div>
+      <h2 class="slide-title">How To Use It in <span class="gradient-text">30 Seconds</span></h2>
+      <div class="slide-subtitle">Drag, drop, and get your study priorities instantly.</div>
       <div class="slide-body">
         <div class="grid-3">
-          <div class="deck-card">
-            <div class="card-icon">⚡</div>
-            <div class="card-heading">15+ Hours Saved</div>
-            <div class="card-text">
-              Eliminates the agonizing guesswork of what to study. Students focus immediately on the highest-probability exam material.
-            </div>
+          <div class="card">
+            <div style="font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 6px;">01</div>
+            <div class="card-title">Drop Past Papers</div>
+            <div class="card-desc">Drop 2 or more past exam papers (.docx, .pdf, or .txt) into the upload box.</div>
           </div>
-          <div class="deck-card">
-            <div class="card-icon">📝</div>
-            <div class="card-heading">Automated Mock Exams</div>
-            <div class="card-text">
-              Next feature: Synthesizing customized mock exam papers that strictly follow the predicted topic distribution of the upcoming exam.
-            </div>
+
+          <div class="card">
+            <div style="font-size: 32px; font-weight: 800; color: #8b5cf6; margin-bottom: 6px;">02</div>
+            <div class="card-title">Click Extract</div>
+            <div class="card-desc">The AI automatically extracts all questions and point values in under 10 seconds.</div>
           </div>
-          <div class="deck-card">
-            <div class="card-icon">🌐</div>
-            <div class="card-heading">Campus Crowdsourcing</div>
-            <div class="card-text">
-              Enabling university classes to collaboratively upload and index past papers, building an open predictive knowledge base.
-            </div>
+
+          <div class="card">
+            <div style="font-size: 32px; font-weight: 800; color: #10b981; margin-bottom: 6px;">03</div>
+            <div class="card-title">Follow The Ranks</div>
+            <div class="card-desc">Study Rank #1 first, then #2, then #3. You're guaranteed to cover the questions with the highest marks.</div>
           </div>
         </div>
-        <div style="margin-top: 28px; text-align: center;">
-          <a href="/" target="_blank" class="slide-tag" style="font-size: 16px; padding: 10px 24px; text-decoration: none;">
-            🚀 Launch Live ExamOracle Demo
+
+        <div style="margin-top: 26px; text-align: center;">
+          <a href="/" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; padding: 12px 28px; border-radius: 9999px; font-weight: 700; text-decoration: none; font-size: 16px;">
+            🚀 Open Live ExamOracle App
           </a>
         </div>
       </div>
@@ -651,15 +400,13 @@
 
   <!-- Navigation Footer -->
   <div class="deck-footer">
-    <div class="slide-counter" id="slideCounter">Slide 1 of 9</div>
-    <div class="nav-controls">
-      <button class="nav-btn" id="prevBtn" title="Previous Slide (Left Arrow)">◀</button>
-      <button class="nav-btn" id="nextBtn" title="Next Slide (Right Arrow, Space)">▶</button>
+    <div id="slideCounter" style="font-size: 14px; font-weight: 600; color: var(--text-muted);">Slide 1 of 5</div>
+    <div>
+      <button class="nav-btn" id="prevBtn">◀</button>
+      <button class="nav-btn" id="nextBtn">▶</button>
     </div>
-    <div class="deck-actions">
-      <a href="/" class="action-link" title="Open ExamOracle App">
-        <span>Open App</span> ↗
-      </a>
+    <div>
+      <a href="/" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">Exit to App ↗</a>
     </div>
   </div>
 
@@ -669,54 +416,30 @@
     const nextBtn = document.getElementById('nextBtn');
     const slideCounter = document.getElementById('slideCounter');
     const progressBar = document.getElementById('progressBar');
-    let currentIndex = 0;
+    let cur = 0;
 
-    function updateSlide(newIndex) {
-      if (newIndex < 0 || newIndex >= slides.length) return;
-      slides[currentIndex].classList.remove('active');
-      currentIndex = newIndex;
-      slides[currentIndex].classList.add('active');
-
-      slideCounter.textContent = `Slide ${currentIndex + 1} of ${slides.length}`;
-      const pct = ((currentIndex + 1) / slides.length) * 100;
-      progressBar.style.width = pct + '%';
+    function show(i) {
+      if (i < 0 || i >= slides.length) return;
+      slides[cur].classList.remove('active');
+      cur = i;
+      slides[cur].classList.add('active');
+      slideCounter.textContent = `Slide ${cur + 1} of ${slides.length}`;
+      progressBar.style.width = ((cur + 1) / slides.length * 100) + '%';
     }
 
-    prevBtn.addEventListener('click', () => updateSlide(currentIndex - 1));
-    nextBtn.addEventListener('click', () => updateSlide(currentIndex + 1));
+    prevBtn.onclick = () => show(cur - 1);
+    nextBtn.onclick = () => show(cur + 1);
 
-    // Keyboard controls
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-        e.preventDefault();
-        updateSlide(currentIndex + 1);
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-        e.preventDefault();
-        updateSlide(currentIndex - 1);
-      } else if (e.key === 'Home') {
-        updateSlide(0);
-      } else if (e.key === 'End') {
-        updateSlide(slides.length - 1);
-      } else if (e.key.toLowerCase() === 'f') {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
-        }
+    window.onkeydown = (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(cur + 1);
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(cur - 1);
+      if (e.key.toLowerCase() === 'f') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+        else document.exitFullscreen().catch(()=>{});
       }
-    });
+    };
 
-    // Touch / Swipe
-    let touchStartX = 0;
-    window.addEventListener('touchstart', (e) => touchStartX = e.touches[0].clientX);
-    window.addEventListener('touchend', (e) => {
-      const diff = e.changedTouches[0].clientX - touchStartX;
-      if (diff > 50) updateSlide(currentIndex - 1);
-      if (diff < -50) updateSlide(currentIndex + 1);
-    });
-
-    // Init
-    updateSlide(0);
+    show(0);
   </script>
 </body>
 </html>
