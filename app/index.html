@@ -1200,9 +1200,9 @@
     function getSettings() {
       const defaults = {
         provider: "openai",
-        base_url: "https://integrate.api.nvidia.com/v1",
-        model: "openai/gptoss20b",
-        api_key: "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"
+        base_url: "https://api.groq.com/openai/v1",
+        model: "openai/gpt-oss-20b",
+        api_key: ""
       };
       try {
         const stored = JSON.parse(localStorage.getItem("examoracle-settings"));

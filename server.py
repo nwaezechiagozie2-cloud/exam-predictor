@@ -19,6 +19,7 @@ Run:  python3 server.py   (then open http://localhost:8787)
 
 import io
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -108,15 +109,17 @@ def call_claude(prompt):
     return result.stdout.strip()
 
 
-NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-NVIDIA_MODEL = "openai/gptoss20b"
-NVIDIA_API_KEY = "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"
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+GROQ_MODEL = "openai/gpt-oss-20b"
+# Set via environment: GROQ_API_KEY=gsk-... python3 server.py
+# (never hardcode — GitHub push protection blocks secret commits)
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 
 def call_openai(prompt, cfg):
-    api_key = cfg.get("api_key") or NVIDIA_API_KEY
-    base = (cfg.get("base_url") or NVIDIA_BASE_URL).rstrip("/")
-    model = cfg.get("model") or NVIDIA_MODEL
+    api_key = cfg.get("api_key") or GROQ_API_KEY
+    base = (cfg.get("base_url") or GROQ_BASE_URL).rstrip("/")
+    model = cfg.get("model") or GROQ_MODEL
     body = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
@@ -124,7 +127,9 @@ def call_openai(prompt, cfg):
     req = urllib.request.Request(
         base + "/chat/completions", data=body,
         headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {api_key}"})
+                 "Authorization": f"Bearer {api_key}",
+                 # Groq's Cloudflare rejects the default Python-urllib UA (error 1010)
+                 "User-Agent": "ExamOracle/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=300) as resp:
             out = json.loads(resp.read().decode())
