@@ -1091,6 +1091,12 @@
       return BACKEND_URL + endpoint;
     }
 
+    // ngrok's free tier serves an interstitial page to browsers; this header bypasses it
+    function apiFetch(url, opts = {}) {
+      opts.headers = Object.assign({}, opts.headers || {}, { "ngrok-skip-browser-warning": "1" });
+      return fetch(url, opts);
+    }
+
     // State
     let allRows = [];
     let activeCourse = null;
@@ -1244,7 +1250,7 @@
     // Check Health
     async function checkHealth() {
       try {
-        const res = await fetch(apiUrl("/health"));
+        const res = await apiFetch(apiUrl("/health"));
         const data = await res.json();
         apiDot.className = "status-dot";
         apiStatusText.textContent = data.claude_cli ? "API Live (Claude CLI ready)" : "API Live";
@@ -1439,7 +1445,7 @@
 
     async function resetToSeed() {
       try {
-        const res = await fetch(apiUrl("/seed")).catch(() => null);
+        const res = await apiFetch(apiUrl("/seed")).catch(() => null);
         if (res && res.ok) {
           allRows = await res.json();
         } else {
@@ -1466,7 +1472,7 @@
         return;
       }
       try {
-        const res = await fetch(apiUrl("/analyze"), {
+        const res = await apiFetch(apiUrl("/analyze"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ rows: allRows })
@@ -2023,7 +2029,7 @@
           fText = await file.text();
         } else if (fname.endsWith(".pdf") || fname.endsWith(".docx") || fname.endsWith(".doc")) {
           try {
-            const res = await fetch(apiUrl("/pdftotext"), { method: "POST", body: file });
+            const res = await apiFetch(apiUrl("/pdftotext"), { method: "POST", body: file });
             if (res.ok) {
               const data = await res.json();
               fText = data.text;
@@ -2059,7 +2065,7 @@
       } else if (fname.endsWith(".pdf") || fname.endsWith(".docx") || fname.endsWith(".doc")) {
         try {
           fileUploadStatus.textContent = `Extracting document text...`;
-          const res = await fetch(apiUrl("/pdftotext"), {
+          const res = await apiFetch(apiUrl("/pdftotext"), {
             method: "POST",
             body: file
           });
@@ -2145,7 +2151,7 @@ Find the Taylor series for f(x) = ln(1 + x) centered at x = 0, and determine its
       extractQuestionsBtn.innerHTML = `<span>⏳ Extracting questions with AI...</span>`;
 
       try {
-        const res = await fetch(apiUrl("/extract"), {
+        const res = await apiFetch(apiUrl("/extract"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)

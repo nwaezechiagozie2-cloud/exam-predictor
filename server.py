@@ -408,7 +408,8 @@ class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers",
+                         "Content-Type, Authorization, ngrok-skip-browser-warning")
         super().end_headers()
 
     def do_OPTIONS(self):
